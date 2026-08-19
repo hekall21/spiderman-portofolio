@@ -42,11 +42,11 @@ export default function Navbar() {
 
   return (
     <header
+      className="navbar-header"
       style={{
         position: "fixed",
         top: 0, left: 0, right: 0,
         zIndex: 1000,
-        padding: "0 3rem",
         height: "72px",
         display: "flex",
         alignItems: "center",

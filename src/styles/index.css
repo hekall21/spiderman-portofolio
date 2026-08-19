@@ -111,6 +111,25 @@ img { max-width: 100%; display: block; }
 }
 
 /* ══════════════════════════════════════════════
+   NAVBAR RESPONSIVE
+   ══════════════════════════════════════════════ */
+.navbar-header {
+  padding: 0 3rem;
+}
+
+@media (max-width: 1023px) {
+  .navbar-header {
+    padding: 0 1.25rem;
+  }
+  .desktop-nav {
+    display: none !important;
+  }
+  .mobile-menu-btn {
+    display: flex !important;
+  }
+}
+
+/* ══════════════════════════════════════════════
    CINEMATIC OVERLAYS & BACKGROUNDS
    ══════════════════════════════════════════════ */
 .noise-overlay {
