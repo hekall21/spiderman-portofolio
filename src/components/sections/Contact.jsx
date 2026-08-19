@@ -261,6 +261,7 @@ export default function Contact() {
             .contact-bento-grid {
               grid-template-columns: 1fr;
             }
+            .hide-on-mobile { display: none !important; }
             .contact-card-email {
               grid-column: span 1;
               flex-direction: column !important;

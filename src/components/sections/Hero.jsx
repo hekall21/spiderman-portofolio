@@ -143,7 +143,7 @@ export default function Hero() {
           maxWidth: "1200px",
           margin: "0 auto",
           width: "100%",
-          padding: "0 2rem",
+          padding: "0 clamp(1.25rem, 5vw, 2rem)",
           display: "grid",
           gridTemplateColumns: "1.2fr 0.8fr",
           alignItems: "center",
@@ -160,7 +160,7 @@ export default function Hero() {
           <motion.div variants={fadeUp} style={{ marginBottom: "1.5rem" }}>
             <span style={{
               fontFamily: "var(--font-decorative)",
-              fontSize: "clamp(2.5rem, 4vw, 3.5rem)",
+              fontSize: "clamp(2rem, 5vw, 3.5rem)",
               color: "var(--color-red)",
               textShadow: "0 0 10px rgba(229,9,20,0.4)",
             }}>
@@ -171,7 +171,7 @@ export default function Hero() {
           {/* Name */}
           <div style={{
             fontFamily: "var(--font-display)",
-            fontSize: "clamp(3rem, 6.5vw, 5.5rem)",
+            fontSize: "clamp(2rem, 10vw, 5.5rem)",
             fontWeight: 800,
             lineHeight: 1.1,
             textTransform: "uppercase",
