@@ -137,6 +137,7 @@ export default function Hero() {
 
       {/* Content Container */}
       <div
+        className="hero-grid-container"
         style={{
           position: "relative",
           zIndex: 2,
@@ -155,6 +156,7 @@ export default function Hero() {
           variants={staggerContainer}
           initial="hidden"
           animate="visible"
+          className="hero-text-col"
         >
           {/* Greeting */}
           <motion.div variants={fadeUp} style={{ marginBottom: "1.5rem" }}>
@@ -171,7 +173,7 @@ export default function Hero() {
           {/* Name */}
           <div style={{
             fontFamily: "var(--font-display)",
-            fontSize: "clamp(2rem, 10vw, 5.5rem)",
+            fontSize: "clamp(2rem, 8vw, 5.5rem)",
             fontWeight: 800,
             lineHeight: 1.1,
             textTransform: "uppercase",
@@ -189,11 +191,12 @@ export default function Hero() {
           <motion.div variants={fadeUp} style={{
             marginTop: "1.5rem",
             fontFamily: "var(--font-mono)",
-            fontSize: "clamp(1rem, 1.5vw, 1.25rem)",
+            fontSize: "clamp(0.9rem, 1.5vw, 1.25rem)",
             color: "var(--color-text)",
             display: "flex",
             alignItems: "center",
             gap: "0.75rem",
+            flexWrap: "wrap"
           }}>
             <span style={{ color: "var(--color-purple)" }}>Role:</span>
             <span style={{ color: "var(--color-white)", fontWeight: 600 }}>{typedRole}</span>
@@ -204,7 +207,7 @@ export default function Hero() {
           <motion.p variants={fadeUp} style={{
             marginTop: "2rem",
             fontFamily: "var(--font-body)",
-            fontSize: "1rem",
+            fontSize: "0.95rem",
             lineHeight: 1.8,
             color: "var(--color-muted)",
             maxWidth: "540px",
@@ -260,21 +263,22 @@ export default function Hero() {
           className="hero-image-col"
         >
           {/* Main Photo Container */}
-          <div style={{ position: "relative", width: "100%", maxWidth: "400px", margin: "0 auto", zIndex: 2 }}>
+          <div style={{ position: "relative", width: "100%", maxWidth: "340px", margin: "0 auto", zIndex: 2 }}>
             
-            {/* Hanging Spiderman (Smaller, decorative) */}
+            {/* Hanging Spiderman */}
             <motion.div
+               className="hero-hanging-spiderman"
                style={{ 
-                 position: "absolute", top: "-60px", right: "-40px", zIndex: 10,
+                 position: "absolute", top: "-50px", right: "-30px", zIndex: 10,
                  filter: "drop-shadow(0 15px 30px rgba(0,0,0,0.8))"
                }}
-               animate={shouldReduceMotion ? {} : { y: [0, 10, 0], rotate: [-2, 2, -2] }}
+               animate={shouldReduceMotion ? {} : { y: [0, 8, 0], rotate: [-2, 2, -2] }}
                transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
             >
               <img 
                 src="/spiderman-transparent.png" 
                 alt="Spider-Man" 
-                style={{ width: "140px" }}
+                style={{ width: "110px" }}
               />
             </motion.div>
 
@@ -284,9 +288,9 @@ export default function Hero() {
               aspectRatio: "3/4", 
               borderRadius: "20px", 
               padding: "10px",
-              background: "rgba(10,15,26,0.5)",
+              background: "rgba(10,15,26,0.6)",
               border: "1px solid var(--color-purple)",
-              boxShadow: "0 0 40px rgba(172,75,255,0.15), inset 0 0 20px rgba(172,75,255,0.1)",
+              boxShadow: "0 0 40px rgba(172,75,255,0.2), inset 0 0 20px rgba(172,75,255,0.1)",
               position: "relative",
               overflow: "hidden"
             }}>
@@ -351,18 +355,40 @@ export default function Hero() {
 
         <style dangerouslySetInnerHTML={{__html: `
           @media (max-width: 1023px) {
-            #hero > div:nth-child(3) { 
+            .hero-grid-container { 
               grid-template-columns: 1fr !important; 
               text-align: center;
-              gap: 2rem !important;
+              gap: 2.5rem !important;
+              padding-top: 1rem !important;
             }
             .hero-image-col { 
-              order: -1; /* Make image appear on top on mobile */
-              margin-bottom: 2rem;
+              order: -1 !important; /* Make image appear ON TOP in center on mobile */
+              margin: 0 auto !important;
+              max-width: 260px !important;
+              width: 100% !important;
             }
-            .hero-ctas { justify-content: center; }
-            #hero p, #hero div { margin-left: auto; margin-right: auto; }
-            #hero .btn-primary, #hero .btn-secondary { margin: 0 auto; }
+            .hero-hanging-spiderman img {
+              width: 90px !important;
+            }
+            .hero-hanging-spiderman {
+              top: -40px !important;
+              right: -20px !important;
+            }
+            .hero-text-col {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+            }
+            .hero-ctas { 
+              justify-content: center !important; 
+            }
+            #hero p, #hero div { 
+              margin-left: auto; 
+              margin-right: auto; 
+            }
+            #hero .btn-primary, #hero .btn-secondary { 
+              margin: 0 auto; 
+            }
           }
           @keyframes scanline {
             0% { top: 0%; opacity: 0; }
