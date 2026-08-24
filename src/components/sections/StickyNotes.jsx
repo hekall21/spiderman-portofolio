@@ -42,19 +42,16 @@ const categoryIconMap = {
   Heart: Heart,
 };
 
-const STORAGE_KEY = "spiderman_portfolio_user_notes_v5";
+const STORAGE_KEY = "spiderman_portfolio_user_notes_v6";
+const REACTED_STORAGE_KEY = "spiderman_reacted_notes_v6";
 
 export default function StickyNotes() {
   const [notes, setNotes] = useState(() => {
     try {
       const savedUserNotes = localStorage.getItem(STORAGE_KEY);
-      const parsedUserNotes = savedUserNotes ? JSON.parse(savedUserNotes) : [];
-      // Combine user-created notes with default curated notes (no duplicates by id)
-      const existingIds = new Set(parsedUserNotes.map((n) => n.id));
-      const filteredInitial = INITIAL_STICKY_NOTES.filter((n) => !existingIds.has(n.id));
-      return [...parsedUserNotes, ...filteredInitial];
+      return savedUserNotes ? JSON.parse(savedUserNotes) : [];
     } catch {
-      return INITIAL_STICKY_NOTES;
+      return [];
     }
   });
 
@@ -64,26 +61,26 @@ export default function StickyNotes() {
   const [isCloudSyncActive, setIsCloudSyncActive] = useState(true);
   const [reactedNotes, setReactedNotes] = useState(() => {
     try {
-      const saved = localStorage.getItem("spiderman_reacted_notes_v5");
+      const saved = localStorage.getItem(REACTED_STORAGE_KEY);
       return saved ? JSON.parse(saved) : {};
     } catch {
       return {};
     }
   });
 
-  // Real-time Firebase Firestore Subscription
+  // Real-time Cloud Subscription
   useEffect(() => {
     const unsubscribe = subscribeToStickyNotes(
       (cloudNotes) => {
-        if (cloudNotes && cloudNotes.length > 0) {
+        if (cloudNotes && Array.isArray(cloudNotes)) {
           setIsCloudSyncActive(true);
           setNotes((prevNotes) => {
             const cloudIds = new Set(cloudNotes.map((cn) => cn.id));
-            // Keep local user-created notes that are still being sent to Google Sheets
-            const unsyncedUserNotes = prevNotes.filter(
-              (pn) => !cloudIds.has(pn.id) && pn.isUserCreated
+            const now = Date.now();
+            const pendingUnsynced = prevNotes.filter(
+              (pn) => pn.isPending && !cloudIds.has(pn.id) && (now - (pn.submittedAt || 0) < 15000)
             );
-            return [...unsyncedUserNotes, ...cloudNotes];
+            return [...pendingUnsynced, ...cloudNotes];
           });
         }
       },
@@ -108,11 +105,10 @@ export default function StickyNotes() {
   });
   const [copiedId, setCopiedId] = useState(null);
 
-  // Sync ONLY user-created notes to localStorage for offline resilience
+  // Sync user-created notes to localStorage for offline resilience
   useEffect(() => {
     try {
-      const userOnly = notes.filter((n) => n.isUserCreated);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(userOnly));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
     } catch (e) {
       console.warn("Storage error", e);
     }
@@ -120,7 +116,7 @@ export default function StickyNotes() {
 
   useEffect(() => {
     try {
-      localStorage.setItem("spiderman_reacted_notes_v5", JSON.stringify(reactedNotes));
+      localStorage.setItem(REACTED_STORAGE_KEY, JSON.stringify(reactedNotes));
     } catch (e) {
       console.warn("Storage error", e);
     }
@@ -206,6 +202,8 @@ export default function StickyNotes() {
       reactions: { web: 1, love: 1, zap: 1, fire: 1 },
       rotation: 0,
       isUserCreated: true,
+      isPending: true,
+      submittedAt: Date.now(),
     };
 
     // Optimistic local update
@@ -468,7 +466,11 @@ export default function StickyNotes() {
                 marginBottom: "0.5rem",
               }}
             >
-              Belum ada Sticky Note di kategori ini
+              {searchQuery
+                ? "Tidak ada catatan yang cocok dengan pencarian"
+                : activeCategory === "all"
+                ? "Belum ada catatan yang ditempelkan"
+                : "Belum ada Sticky Note di kategori ini"}
             </h4>
             <p
               style={{

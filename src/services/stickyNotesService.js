@@ -13,8 +13,8 @@ const GOOGLE_APPSCRIPT_URL =
   import.meta.env.VITE_APPSCRIPT_URL || "https://script.google.com/macros/s/AKfycbwPIWN5zgvwiiEz2PMK6rHSVWMk5pqtcrb3ZCDR7_eNHNBX457ZTMaY5nFFPXBBzcMhWg/exec";
 
 // Storage key untuk fallback lokal
-const STORAGE_KEY = "spiderman_portfolio_user_notes_v5";
-const STORAGE_REACTED_KEY = "spiderman_reacted_notes_v5";
+const STORAGE_KEY = "spiderman_portfolio_user_notes_v6";
+const STORAGE_REACTED_KEY = "spiderman_reacted_notes_v6";
 
 /**
  * Cek apakah backend Google Apps Script sudah terkonfigurasi
@@ -42,7 +42,7 @@ export async function fetchGlobalCloudNotes() {
     }
 
     const result = await response.json();
-    if (result && result.success && Array.isArray(result.notes) && result.notes.length > 0) {
+    if (result && result.success && Array.isArray(result.notes)) {
       return result.notes;
     }
 
@@ -175,11 +175,9 @@ function getLocalFallbackNotes() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
     const parsed = saved ? JSON.parse(saved) : [];
-    const localIds = new Set(parsed.map((n) => n.id));
-    const curated = INITIAL_STICKY_NOTES.filter((n) => !localIds.has(n.id));
-    return [...parsed, ...curated];
+    return parsed;
   } catch {
-    return INITIAL_STICKY_NOTES;
+    return [];
   }
 }
 

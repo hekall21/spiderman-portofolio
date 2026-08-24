@@ -16,79 +16,9 @@
 
 const SHEET_NAME = "SpiderNotes";
 
-// Catatan awal Spider-Verse jika sheet baru dibuat
-const INITIAL_SEEDED_NOTES = [
-  {
-    id: "spidey-note-1",
-    author: "Miles Morales",
-    aliasBadge: "⚡ Brooklyn Visionary (Earth-1610)",
-    category: "lore",
-    colorId: "crimson",
-    title: "Crazy Good Spider-Sense UI!",
-    message: "That Sunflower vinyl player and the precision coordinate HUD are straight out of the Spider-Verse! Keep swinging high, Haikel! 🕷️🔥",
-    timestamp: "2 hours ago",
-    reactions: JSON.stringify({ web: 24, love: 18, zap: 31, fire: 42 }),
-    rotation: -1.8,
-    isPinned: true,
-    status: "active"
-  },
-  {
-    id: "spidey-note-2",
-    author: "Gwen Stacy",
-    aliasBadge: "🥁 Ghost-Spider (Earth-65)",
-    category: "collab",
-    colorId: "gwen-teal",
-    title: "Awesome Audio & Tech Skills",
-    message: "Love the rhythm and smooth 60fps kinetic animations on mobile. Let's collaborate on a drum & synth web visualizer soon! 🎸✨",
-    timestamp: "5 hours ago",
-    reactions: JSON.stringify({ web: 19, love: 28, zap: 14, fire: 22 }),
-    rotation: 1.5,
-    isPinned: false,
-    status: "active"
-  },
-  {
-    id: "spidey-note-3",
-    author: "Peter Parker",
-    aliasBadge: "🕸️ Friendly Neighborhood (Earth-616)",
-    category: "feedback",
-    colorId: "cyan-2099",
-    title: "Clean Architecture & Great Responsibility",
-    message: "With great coding skills comes great responsibility. The BNSP Certified Network & Software stack is rock-solid. Proud of you!",
-    timestamp: "1 day ago",
-    reactions: JSON.stringify({ web: 45, love: 36, zap: 29, fire: 50 }),
-    rotation: -2.2,
-    isPinned: false,
-    status: "active"
-  },
-  {
-    id: "spidey-note-4",
-    author: "Miguel O'Hara",
-    aliasBadge: "🛡️ Spider-Man 2099 (Earth-928)",
-    category: "mission",
-    colorId: "symbiote-purple",
-    title: "Multiverse Protocol Verified",
-    message: "Telemetry scan complete. Zero layout shifts, high-speed Vite build, and flawless responsive viewport. Protocol approved. 🌐",
-    timestamp: "2 days ago",
-    reactions: JSON.stringify({ web: 32, love: 15, zap: 41, fire: 27 }),
-    rotation: 2.0,
-    isPinned: false,
-    status: "active"
-  },
-  {
-    id: "spidey-note-5",
-    author: "Ned Leeds",
-    aliasBadge: "💻 Guy In The Chair",
-    category: "cheer",
-    colorId: "electric-yellow",
-    title: "The Terminal Boot is LEGENDARY!",
-    message: "Dude, that BIOS terminal boot sequence at the start blew my mind! You're officially the guy in the chair for our tech squad! 🚀",
-    timestamp: "3 days ago",
-    reactions: JSON.stringify({ web: 52, love: 44, zap: 38, fire: 63 }),
-    rotation: -1.2,
-    isPinned: false,
-    status: "active"
-  }
-];
+// Catatan awal Spider-Verse jika sheet baru dibuat (kosong agar hanya diisi pengunjung)
+const INITIAL_SEEDED_NOTES = [];
+
 
 /**
  * Mendapatkan sheet "SpiderNotes", atau membuatnya otomatis jika belum ada
