@@ -122,16 +122,21 @@ export default function StickyNotes() {
     }
   }, [reactedNotes]);
 
-  // Filtered Notes
+  // Filtered Notes (Defensive null checks)
   const filteredNotes = useMemo(() => {
     return notes.filter((note) => {
+      if (!note) return false;
       const matchCategory =
         activeCategory === "all" || note.category === activeCategory;
+      const q = (searchQuery || "").trim().toLowerCase();
+      const title = String(note.title || "").toLowerCase();
+      const message = String(note.message || "").toLowerCase();
+      const author = String(note.author || "").toLowerCase();
       const matchSearch =
-        searchQuery.trim() === "" ||
-        note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        note.message.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        note.author.toLowerCase().includes(searchQuery.toLowerCase());
+        q === "" ||
+        title.includes(q) ||
+        message.includes(q) ||
+        author.includes(q);
       return matchCategory && matchSearch;
     });
   }, [notes, activeCategory, searchQuery]);
@@ -205,6 +210,10 @@ export default function StickyNotes() {
       isPending: true,
       submittedAt: Date.now(),
     };
+
+    // Ensure newly submitted note is visible immediately
+    setActiveCategory("all");
+    setSearchQuery("");
 
     // Optimistic local update
     setNotes((prevNotes) => [newNote, ...prevNotes]);
