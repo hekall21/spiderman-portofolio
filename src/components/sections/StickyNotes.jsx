@@ -204,9 +204,8 @@ export default function StickyNotes() {
       message: formData.message.trim(),
       timestamp: "Just now",
       reactions: { web: 1, love: 1, zap: 1, fire: 1 },
-      rotation: (Math.random() - 0.5) * 4,
+      rotation: 0,
       isUserCreated: true,
-      isCloudSynced: true,
     };
 
     // Optimistic local update
@@ -498,31 +497,14 @@ export default function StickyNotes() {
               alignItems: "start",
             }}
           >
-            <AnimatePresence mode="popLayout">
-              {filteredNotes.map((note, index) => {
+            {filteredNotes.map((note) => {
                 const colorObj =
                   NOTE_COLORS.find((c) => c.id === note.colorId) || NOTE_COLORS[0];
                 const isCopied = copiedId === note.id;
 
                 return (
-                  <motion.div
+                  <div
                     key={note.id}
-                    layout
-                    initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.85, y: -20 }}
-                    transition={{
-                      duration: 0.35,
-                      delay: Math.min(index * 0.05, 0.3),
-                      ease: [0.16, 1, 0.3, 1],
-                    }}
-                    whileHover={{
-                      y: -8,
-                      scale: 1.02,
-                      rotate: 0,
-                      boxShadow: `0 15px 35px rgba(0, 0, 0, 0.7), 0 0 25px ${colorObj.glow}`,
-                      zIndex: 20,
-                    }}
                     className="sticky-note-card"
                     style={{
                       position: "relative",
@@ -532,10 +514,9 @@ export default function StickyNotes() {
                       padding: "1.5rem 1.25rem 1.25rem",
                       backdropFilter: "blur(16px)",
                       WebkitBackdropFilter: "blur(16px)",
-                      boxShadow: `0 8px 24px rgba(0, 0, 0, 0.4), 0 0 15px ${colorObj.glow}`,
-                      transform: `rotate(${note.rotation || 0}deg)`,
-                      transition: "transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease",
-                      willChange: "transform, box-shadow",
+                      boxShadow: `0 4px 20px rgba(0, 0, 0, 0.4), 0 0 10px ${colorObj.glow}`,
+                      transform: "none",
+                      transition: "box-shadow 0.2s ease, border-color 0.2s ease",
                     }}
                   >
                     {/* Cyber Web Tape Header (Top Pin) */}
@@ -722,9 +703,8 @@ export default function StickyNotes() {
                           const hasReacted = reactedNotes[`${note.id}_${rx.key}`];
 
                           return (
-                            <motion.button
+                            <button
                               key={rx.key}
-                              whileTap={{ scale: 0.85 }}
                               onClick={() => handleReaction(note.id, rx.key)}
                               title={rx.label}
                               style={{
@@ -750,15 +730,14 @@ export default function StickyNotes() {
                             >
                               <span>{rx.icon}</span>
                               <span>{count}</span>
-                            </motion.button>
+                            </button>
                           );
                         })}
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 );
               })}
-            </AnimatePresence>
           </div>
         )}
       </div>
