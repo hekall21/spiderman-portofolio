@@ -27,16 +27,14 @@ export const isCloudConfigured = Boolean(GOOGLE_APPSCRIPT_URL && GOOGLE_APPSCRIP
  */
 export async function fetchGlobalCloudNotes() {
   if (!GOOGLE_APPSCRIPT_URL) {
-    // Mode offline / belum pasang URL: Gunakan localStorage + initial notes
     return getLocalFallbackNotes();
   }
 
   try {
     const response = await fetch(GOOGLE_APPSCRIPT_URL, {
       method: "GET",
-      headers: {
-        "Accept": "application/json",
-      },
+      redirect: "follow",
+      cache: "no-store",
     });
 
     if (!response.ok) {
@@ -48,7 +46,6 @@ export async function fetchGlobalCloudNotes() {
       return result.notes;
     }
 
-    // Jika response kosong, fallback
     return getLocalFallbackNotes();
   } catch (err) {
     console.info("Info: Menggunakan cache lokal (Google Sheets sync standby):", err.message);
@@ -66,13 +63,14 @@ export async function createCloudStickyNote(newNote) {
   saveNoteLocally(newNote);
 
   if (!GOOGLE_APPSCRIPT_URL) {
-    return true; // Berhasil disimpan lokal
+    return true;
   }
 
   try {
-    // Gunakan text/plain;charset=utf-8 untuk menghindari CORS preflight blocked di Google Apps Script
     const response = await fetch(GOOGLE_APPSCRIPT_URL, {
       method: "POST",
+      mode: "cors",
+      redirect: "follow",
       headers: {
         "Content-Type": "text/plain;charset=utf-8",
       },
@@ -127,7 +125,7 @@ export async function updateCloudReaction(noteId, reactionKey, isAdding = true) 
  * @param {number} intervalMs - Interval polling (default 12000ms / 12 detik)
  * @returns {Function} Unsubscribe cleanup function
  */
-export function subscribeToStickyNotes(onNotesReceived, intervalMs = 12000) {
+export function subscribeToStickyNotes(onNotesReceived, intervalMs = 6000) {
   let isMounted = true;
   let lastNotesHash = "";
 

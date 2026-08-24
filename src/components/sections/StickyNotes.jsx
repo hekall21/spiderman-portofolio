@@ -79,11 +79,11 @@ export default function StickyNotes() {
           setIsCloudSyncActive(true);
           setNotes((prevNotes) => {
             const cloudIds = new Set(cloudNotes.map((cn) => cn.id));
-            // Keep local user notes that haven't synced yet + initial notes not in cloud
-            const nonDuplicatePrev = prevNotes.filter(
-              (pn) => !cloudIds.has(pn.id) && !pn.isCloudSynced
+            // Keep local user-created notes that are still being sent to Google Sheets
+            const unsyncedUserNotes = prevNotes.filter(
+              (pn) => !cloudIds.has(pn.id) && pn.isUserCreated
             );
-            return [...cloudNotes, ...nonDuplicatePrev];
+            return [...unsyncedUserNotes, ...cloudNotes];
           });
         }
       },
