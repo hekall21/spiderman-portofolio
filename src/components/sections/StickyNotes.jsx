@@ -42,8 +42,8 @@ const categoryIconMap = {
   Heart: Heart,
 };
 
-const STORAGE_KEY = "spiderman_portfolio_user_notes_v6";
-const REACTED_STORAGE_KEY = "spiderman_reacted_notes_v6";
+const STORAGE_KEY = "spiderman_portfolio_user_notes_v7";
+const REACTED_STORAGE_KEY = "spiderman_reacted_notes_v7";
 
 export default function StickyNotes() {
   const [notes, setNotes] = useState(() => {

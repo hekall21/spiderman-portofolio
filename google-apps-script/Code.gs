@@ -1,20 +1,10 @@
 // =========================================================================
-// 🕷️ KODE GOOGLE APPS SCRIPT - STICKY NOTES SPIDER-MAN PORTOFOLIO
-// =========================================================================
-// CARA PAKAI:
-// 1. Tekan CTRL + A lalu CTRL + C (Salin Semua Kode di Notepad ini).
-// 2. Buka tab Google Apps Script di browser Anda:
-//    https://script.google.com/u/0/home/projects/1oGuZHIkWTOknyq-8mkdkq_0QBX6ZPA3SiZYljcw9godRVYbtHrCeJzk4/edit
-// 3. Hapus teks lama di Apps Script, lalu CTRL + V (Paste).
-// 4. Tekan CTRL + S untuk Simpan.
-// 5. Klik Deploy (Terapkan) -> Manage deployments (Kelola penerapan).
-// 6. Klik ikon Pensil (Edit) -> Pada "Version" pilih "New version" (Versi baru).
-// 7. Klik Deploy (Terapkan)!
+// 🕷️ KODE GOOGLE APPS SCRIPT (ULTRA REALTIME + 5s MICRO-CACHE ANTI-LOCK)
 // =========================================================================
 
 const SHEET_NAME = "SpiderNotes";
-const CACHE_KEY = "spider_notes_v2";
-const CACHE_TTL_SECONDS = 120; // 2 Menit RAM Cache (Sangat Cepat & Bebas Batasan Simultan)
+const CACHE_KEY = "spider_notes_v3";
+const CACHE_TTL_SECONDS = 5; // 5 Detik Micro-Cache (Real-Time Antar Perangkat & Anti-Lock)
 
 const INITIAL_SEEDED_NOTES = [
   {

@@ -2,24 +2,33 @@
  * =========================================================================
  * 🕷️ SPIDER-MAN PORTFOLIO - COMMUNITY STICKY NOTES SERVICE (GOOGLE APPS SCRIPT)
  * =========================================================================
- * Multi-Device & Mobile Real-Time Sync via Google Sheets API (Serverless, No-Cost)
+ * Ultra Fast Real-Time Multi-Device Sync
  * =========================================================================
  */
 
 import { INITIAL_STICKY_NOTES } from "../data/stickyNotes";
 
-// URL Google Apps Script Web App (diambil dari environment variable atau fallback aktif)
 const GOOGLE_APPSCRIPT_URL =
   import.meta.env.VITE_APPSCRIPT_URL ||
   "https://script.google.com/macros/s/AKfycbwPIWN5zgvwiiEz2PMK6rHSVWMk5pqtcrb3ZCDR7_eNHNBX457ZTMaY5nFFPXBBzcMhWg/exec";
 
-// Storage key untuk sinkronisasi lokal
-const STORAGE_KEY = "spiderman_portfolio_user_notes_v6";
-const STORAGE_REACTED_KEY = "spiderman_reacted_notes_v6";
+const STORAGE_KEY = "spiderman_portfolio_user_notes_v7";
+const STORAGE_REACTED_KEY = "spiderman_reacted_notes_v7";
 
 export const isCloudConfigured = Boolean(
   GOOGLE_APPSCRIPT_URL && GOOGLE_APPSCRIPT_URL.startsWith("http")
 );
+
+// Active listeners for real-time broadcasting across components
+const noteListeners = new Set();
+
+export function notifyAllListeners(notes) {
+  noteListeners.forEach((listener) => {
+    try {
+      listener(notes);
+    } catch (e) {}
+  });
+}
 
 /**
  * Mengambil seluruh Sticky Notes dari Google Sheets
@@ -45,14 +54,12 @@ export async function fetchGlobalCloudNotes() {
     }
 
     const text = await response.text();
-    // Validasi apakah respon adalah JSON valid (bukan HTML error page)
     if (!text.trim().startsWith("{") && !text.trim().startsWith("[")) {
       throw new Error("Respon bukan JSON valid");
     }
 
     const result = JSON.parse(text);
     if (result && result.success && Array.isArray(result.notes)) {
-      // Perbarui cache lokal dengan data cloud terbaru
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(result.notes));
       } catch (e) {}
@@ -67,12 +74,11 @@ export async function fetchGlobalCloudNotes() {
 }
 
 /**
- * Mengirim sticky note baru ke Google Sheets dengan mekanisme Retry untuk Mobile/HP
+ * Mengirim sticky note baru ke Google Sheets dan langsung update semua pendengar
  * @param {Object} newNote 
  * @returns {Promise<boolean>} Status berhasil
  */
 export async function createCloudStickyNote(newNote) {
-  // 1. Simpan segera ke localStorage lokal
   saveNoteLocally(newNote);
 
   if (!GOOGLE_APPSCRIPT_URL) {
@@ -85,7 +91,7 @@ export async function createCloudStickyNote(newNote) {
   });
 
   const sendPost = async () => {
-    const response = await fetch(GOOGLE_APPSCRIPT_URL, {
+    return await fetch(GOOGLE_APPSCRIPT_URL, {
       method: "POST",
       redirect: "follow",
       cache: "no-cache",
@@ -94,22 +100,32 @@ export async function createCloudStickyNote(newNote) {
       },
       body: payload,
     });
-    return response;
   };
 
   try {
-    // Percobaan pertama
     await sendPost();
+    // Langsung trigger fetch cloud instan setelah kirim
+    setTimeout(async () => {
+      const freshNotes = await fetchGlobalCloudNotes();
+      if (Array.isArray(freshNotes)) {
+        notifyAllListeners(freshNotes);
+      }
+    }, 600);
     return true;
   } catch (err) {
-    console.warn("Retrying cloud push for mobile connection...", err.message);
+    console.warn("Retrying cloud push...", err.message);
     try {
-      // Retry sekali setelah jeda 1 detik untuk koneksi HP/mobile
       await new Promise((res) => setTimeout(res, 1000));
       await sendPost();
+      setTimeout(async () => {
+        const freshNotes = await fetchGlobalCloudNotes();
+        if (Array.isArray(freshNotes)) {
+          notifyAllListeners(freshNotes);
+        }
+      }, 600);
       return true;
     } catch (retryErr) {
-      console.warn("Cloud push warning (tersimpan di lokal):", retryErr.message);
+      console.warn("Cloud push saved to offline local:", retryErr.message);
       return false;
     }
   }
@@ -145,19 +161,21 @@ export async function updateCloudReaction(noteId, reactionKey, isAdding = true) 
 }
 
 /**
- * Polling update real-time pintar (hemat kuota & baterai HP, auto pause saat tab tidak aktif)
+ * Polling update real-time pintar
  * @param {Function} onNotesReceived - Callback saat ada data catatan baru
- * @param {number} intervalMs - Interval polling (default 18000ms / 18 detik)
+ * @param {number} intervalMs - Interval polling (default 6000ms / 6 detik)
  * @returns {Function} Unsubscribe cleanup function
  */
-export function subscribeToStickyNotes(onNotesReceived, intervalMs = 18000) {
+export function subscribeToStickyNotes(onNotesReceived, intervalMs = 6000) {
   let isMounted = true;
   let lastNotesHash = "";
   let isSyncing = false;
 
+  noteListeners.add(onNotesReceived);
+
   const sync = async () => {
     if (!isMounted || isSyncing) return;
-    if (document.hidden) return; // Jangan request jika tab di HP/laptop sedang diminimize
+    if (document.hidden) return;
 
     isSyncing = true;
     try {
@@ -172,19 +190,17 @@ export function subscribeToStickyNotes(onNotesReceived, intervalMs = 18000) {
         onNotesReceived(notes);
       }
     } catch (e) {
-      // Silent error handler
+      // Silent
     } finally {
       isSyncing = false;
     }
   };
 
-  // 1. Initial fetch segera saat dimuat
+  // Initial fetch segera saat dimuat
   sync();
 
-  // 2. Interval polling berkala
   const intervalId = setInterval(sync, intervalMs);
 
-  // 3. Sync instan saat pengguna kembali membuka browser/HP
   const onWakeup = () => {
     if (!document.hidden) {
       sync();
@@ -197,6 +213,7 @@ export function subscribeToStickyNotes(onNotesReceived, intervalMs = 18000) {
 
   return () => {
     isMounted = false;
+    noteListeners.delete(onNotesReceived);
     clearInterval(intervalId);
     window.removeEventListener("focus", onWakeup);
     window.removeEventListener("visibilitychange", onWakeup);
@@ -205,7 +222,7 @@ export function subscribeToStickyNotes(onNotesReceived, intervalMs = 18000) {
 }
 
 /**
- * Helper: Ambil catatan gabungan dari localStorage
+ * Helper: Ambil catatan dari localStorage
  */
 function getLocalFallbackNotes() {
   try {
