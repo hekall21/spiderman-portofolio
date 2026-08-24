@@ -3,7 +3,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { profile } from "../../data/profile";
 import WebBackground from "../common/WebBackground";
 import { staggerContainer, fadeUp, fadeIn } from "../../animations/variants";
-import { MapPin, ArrowUpRight, Sparkles, Terminal, Shield, Zap, ArrowRight, ShieldCheck } from "lucide-react";
+import { MapPin, ArrowUpRight, Sparkles, Terminal, Shield, Zap, ArrowRight, ShieldCheck, GraduationCap, Award } from "lucide-react";
 
 function useTypewriter(words, typingSpeed = 60, deletingSpeed = 30, pause = 2000) {
   const [text, setText] = useState("");
@@ -41,6 +41,11 @@ const GlitchText = ({ text }) => {
   const chars = "!<>-_\\\\/[]{}—=+*^?#_";
   
   useEffect(() => {
+    // Only run glitch loop on desktop to save battery & CPU on mobile
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      return;
+    }
+
     let interval;
     const triggerGlitch = () => {
       setIsGlitching(true);
@@ -65,12 +70,10 @@ const GlitchText = ({ text }) => {
         }
         
         iteration += 1 / 3;
-      }, 30);
+      }, 40);
     };
 
-    triggerGlitch();
-    const loop = setInterval(triggerGlitch, 5000);
-    
+    const loop = setInterval(triggerGlitch, 6000);
     return () => {
       clearInterval(interval);
       clearInterval(loop);
@@ -78,13 +81,16 @@ const GlitchText = ({ text }) => {
   }, [text]);
 
   return (
-    <span style={{ 
-      display: "inline-block",
-      position: "relative",
-      color: isGlitching ? "var(--color-white)" : "inherit",
-      textShadow: isGlitching ? "2px 0 var(--color-red), -2px 0 var(--color-blue)" : "none",
-      transition: "color 0.2s"
-    }}>
+    <span 
+      className="glitch-hover"
+      style={{ 
+        display: "inline-block",
+        position: "relative",
+        color: isGlitching ? "var(--color-white)" : "inherit",
+        textShadow: isGlitching ? "2px 0 var(--color-red), -2px 0 var(--color-blue)" : "none",
+        transition: "color 0.2s"
+      }}
+    >
       {displayText}
     </span>
   );
@@ -104,7 +110,7 @@ export default function Hero() {
         y: (e.clientY - window.innerHeight / 2) * 0.015,
       });
     };
-    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, [shouldReduceMotion]);
 
@@ -124,22 +130,23 @@ export default function Hero() {
         overflow: "hidden",
         paddingTop: "90px",
         paddingBottom: "4rem",
+        transform: "translateZ(0)", // GPU Layer
       }}
     >
       <WebBackground variant="hero" />
 
-      {/* Cinematic glows */}
+      {/* Hardware-Accelerated Zero-Lag Ambient Glows */}
       <div style={{
-        position: "absolute", top: "10%", left: "10%",
-        width: "45vw", height: "45vw", borderRadius: "50%",
-        background: "var(--color-red)", filter: "blur(220px)",
-        opacity: 0.18, pointerEvents: "none", zIndex: 0
+        position: "absolute", top: "5%", left: "5%",
+        width: "min(500px, 80vw)", height: "min(500px, 80vw)", borderRadius: "50%",
+        background: "radial-gradient(circle, rgba(229, 9, 20, 0.12) 0%, transparent 70%)",
+        pointerEvents: "none", zIndex: 0
       }} />
       <div style={{
-        position: "absolute", bottom: "10%", right: "10%",
-        width: "45vw", height: "45vw", borderRadius: "50%",
-        background: "var(--color-purple)", filter: "blur(220px)",
-        opacity: 0.18, pointerEvents: "none", zIndex: 0
+        position: "absolute", bottom: "5%", right: "5%",
+        width: "min(500px, 80vw)", height: "min(500px, 80vw)", borderRadius: "50%",
+        background: "radial-gradient(circle, rgba(172, 75, 255, 0.12) 0%, transparent 70%)",
+        pointerEvents: "none", zIndex: 0
       }} />
 
       {/* Content Container */}
@@ -321,7 +328,7 @@ export default function Hero() {
               borderRadius: "8px",
               fontFamily: "var(--font-mono)",
               fontSize: "0.75rem",
-              color: "var(--color-blue-light)",
+              color: "#38bdf8",
               fontWeight: 600,
             }}>
               <Zap size={13} />
@@ -352,7 +359,7 @@ export default function Hero() {
           </motion.div>
         </motion.div>
 
-        {/* Right Column - Profile Image with ICONIC HANGING SPIDER-MAN */}
+        {/* Right Column - Profile Image with HANGING SPIDER-MAN (100% CLEAR FACE) */}
         <motion.div
           variants={fadeIn}
           initial="hidden"
@@ -360,24 +367,22 @@ export default function Hero() {
           style={{ 
             position: "relative",
             transform: shouldReduceMotion ? "none" : `translate(${mousePosition.x}px, ${mousePosition.y}px)`,
-            transition: "transform 0.1s ease-out"
+            transition: "transform 0.15s ease-out"
           }} 
           className="hero-image-col"
         >
           {/* Main Photo Container */}
-          <div style={{ position: "relative", width: "100%", maxWidth: "360px", margin: "0 auto", zIndex: 2 }}>
+          <div style={{ position: "relative", width: "100%", maxWidth: "340px", margin: "0 auto", zIndex: 2 }}>
             
-            {/* ══════════════════════════════════════════════
-               PROMINENT HANGING SPIDER-MAN WITH WEB THREAD
-               ══════════════════════════════════════════════ */}
+            {/* Hanging Spider-Man (Positioned higher so it NEVER blocks the face) */}
             <motion.div
               onClick={handleSpideyClick}
               title="Klik Spider-Man untuk aksi web swing!"
               className="hero-hanging-spiderman"
               style={{ 
                 position: "absolute",
-                top: "-110px",
-                right: "-35px",
+                top: "-75px",
+                right: "-25px",
                 zIndex: 20,
                 cursor: "pointer",
                 display: "flex",
@@ -387,10 +392,10 @@ export default function Hero() {
               }}
               animate={
                 spideyAction
-                  ? { y: [0, -30, 15, 0], rotate: [0, 360, -10, 0], scale: [1, 1.2, 1] }
+                  ? { y: [0, -25, 10, 0], rotate: [0, 360, -10, 0], scale: [1, 1.15, 1] }
                   : shouldReduceMotion
                   ? {}
-                  : { y: [0, 15, 0], rotate: [-4, 4, -4] }
+                  : { y: [0, 10, 0], rotate: [-3, 3, -3] }
               }
               transition={
                 spideyAction
@@ -398,81 +403,84 @@ export default function Hero() {
                   : { repeat: Infinity, duration: 4.2, ease: "easeInOut" }
               }
             >
-              {/* Luminous Web Line Dropping From Sky */}
+              {/* Luminous Web Line */}
               <div
                 style={{
                   width: "2px",
-                  height: "90px",
+                  height: "60px",
                   background: "linear-gradient(180deg, rgba(255,255,255,0.8), var(--color-red), rgba(255,255,255,0.4))",
-                  boxShadow: "0 0 10px rgba(255,255,255,0.8), 0 0 20px var(--color-red)",
-                  marginBottom: "-8px",
+                  boxShadow: "0 0 8px rgba(255,255,255,0.8)",
+                  marginBottom: "-6px",
                   zIndex: 1,
                 }}
               />
 
-              {/* Upside Down Spider-Man */}
+              {/* Spider-Man Cutout */}
               <motion.img 
                 src="/spiderman-transparent.png" 
                 alt="Hanging Spider-Man" 
-                whileHover={{ scale: 1.1 }}
+                whileHover={{ scale: 1.08 }}
                 style={{
-                  width: "150px",
-                  filter: "drop-shadow(0 15px 30px rgba(0,0,0,0.9)) drop-shadow(0 0 25px rgba(229,9,20,0.7))",
+                  width: "115px",
+                  filter: "drop-shadow(0 10px 20px rgba(0,0,0,0.8)) drop-shadow(0 0 15px rgba(229,9,20,0.5))",
                   display: "block",
                   zIndex: 2,
                 }}
               />
 
               {/* Interactive Callout Tooltip */}
-              <motion.div
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: [0.7, 1, 0.7] }}
-                transition={{ repeat: Infinity, duration: 2.5 }}
+              <div
                 style={{
                   fontFamily: "var(--font-mono)",
-                  fontSize: "0.62rem",
+                  fontSize: "0.6rem",
                   color: "#fff",
-                  background: "rgba(229, 9, 20, 0.85)",
-                  padding: "0.2rem 0.6rem",
+                  background: "rgba(229, 9, 20, 0.9)",
+                  padding: "0.15rem 0.5rem",
                   borderRadius: "100px",
-                  marginTop: "-10px",
+                  marginTop: "-6px",
                   letterSpacing: "0.08em",
-                  boxShadow: "0 0 10px rgba(229,9,20,0.5)",
                   border: "1px solid rgba(255,255,255,0.3)",
                   whiteSpace: "nowrap",
                   zIndex: 3,
                 }}
               >
                 🕸️ SPIDEY PATROL
-              </motion.div>
+              </div>
             </motion.div>
 
-            {/* Profile Photo Frame */}
+            {/* Profile Photo Frame (Face is 100% Unobscured) */}
             <div className="neon-card" style={{ 
               width: "100%", 
-              aspectRatio: "3/4", 
-              borderRadius: "20px", 
-              padding: "10px",
-              background: "linear-gradient(135deg, rgba(10,15,26,0.8) 0%, rgba(20,10,25,0.8) 100%)",
-              border: "1px solid var(--color-red)",
-              boxShadow: "0 20px 50px rgba(0,0,0,0.8), 0 0 35px rgba(229,9,20,0.25), inset 0 0 20px rgba(172,75,255,0.15)",
+              aspectRatio: "4/5", 
+              borderRadius: "22px", 
+              padding: "8px",
+              background: "linear-gradient(135deg, rgba(10,15,26,0.9) 0%, rgba(20,10,25,0.9) 100%)",
+              border: "1.5px solid rgba(229,9,20,0.6)",
+              boxShadow: "0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(229,9,20,0.2)",
               position: "relative",
               overflow: "hidden"
             }}>
               <div style={{
                 width: "100%",
                 height: "100%",
-                borderRadius: "14px",
+                borderRadius: "16px",
                 overflow: "hidden",
-                position: "relative"
+                position: "relative",
+                background: "#080a12",
               }}>
                 <img 
                   src="/profile.jpg" 
                   alt="Muhammad Haikel Saleh"
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  style={{ 
+                    width: "100%", 
+                    height: "100%", 
+                    objectFit: "cover",
+                    objectPosition: "center 15%", // Ensures face is centered and fully visible
+                    display: "block",
+                  }}
                   onError={(e) => {
                     e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
+                    if (e.target.nextSibling) e.target.nextSibling.style.display = 'flex';
                   }}
                 />
                 
@@ -490,85 +498,84 @@ export default function Hero() {
                 }}>
                   Muhammad Haikel Saleh
                 </div>
-
-                {/* Cyber Scanline Overlay */}
-                <div style={{
-                  position: "absolute", top: 0, left: 0, width: "100%", height: "4px",
-                  background: "rgba(229,9,20,0.7)",
-                  boxShadow: "0 0 15px var(--color-red)",
-                  animation: "scanline 5s linear infinite",
-                  mixBlendMode: "overlay"
-                }} />
-
-                {/* Bottom Frame Badge */}
-                <div
-                  style={{
-                    position: "absolute",
-                    bottom: "0.75rem",
-                    left: "0.75rem",
-                    right: "0.75rem",
-                    padding: "0.6rem 0.9rem",
-                    background: "rgba(5, 7, 14, 0.88)",
-                    backdropFilter: "blur(12px)",
-                    WebkitBackdropFilter: "blur(12px)",
-                    borderRadius: "8px",
-                    border: "1px solid rgba(255,255,255,0.12)",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    zIndex: 5,
-                  }}
-                >
-                  <div>
-                    <div
-                      style={{
-                        fontFamily: "var(--font-display)",
-                        fontSize: "0.88rem",
-                        fontWeight: 700,
-                        color: "#fff",
-                      }}
-                    >
-                      SMKN 22 Jakarta
-                    </div>
-                    <div
-                      style={{
-                        fontFamily: "var(--font-mono)",
-                        fontSize: "0.62rem",
-                        color: "var(--color-purple)",
-                        letterSpacing: "0.08em",
-                      }}
-                    >
-                      TKJ • LULUSAN 2026
-                    </div>
-                  </div>
-
-                  <div
-                    style={{
-                      padding: "0.25rem 0.55rem",
-                      background: "rgba(229, 9, 20, 0.2)",
-                      border: "1px solid var(--color-red)",
-                      borderRadius: "4px",
-                      fontFamily: "var(--font-mono)",
-                      fontSize: "0.58rem",
-                      color: "var(--color-white)",
-                      fontWeight: 700,
-                    }}
-                  >
-                    BNSP CERTIFIED
-                  </div>
-                </div>
               </div>
             </div>
+
+            {/* Dedicated Info Badge (Positioned BELOW the photo so it NEVER blocks the face!) */}
+            <motion.div
+              variants={fadeUp}
+              style={{
+                marginTop: "0.85rem",
+                padding: "0.75rem 1rem",
+                background: "rgba(10, 14, 24, 0.92)",
+                backdropFilter: "blur(12px)",
+                WebkitBackdropFilter: "blur(12px)",
+                borderRadius: "14px",
+                border: "1px solid rgba(255,255,255,0.1)",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                boxShadow: "0 10px 25px rgba(0,0,0,0.6)",
+              }}
+            >
+              <div style={{ textAlign: "left" }}>
+                <div
+                  style={{
+                    fontFamily: "var(--font-display)",
+                    fontSize: "0.88rem",
+                    fontWeight: 700,
+                    color: "#fff",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.4rem"
+                  }}
+                >
+                  <GraduationCap size={15} color="var(--color-cyan, #00f0ff)" />
+                  <span>SMKN 22 Jakarta</span>
+                </div>
+                <div
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "0.65rem",
+                    color: "var(--color-purple)",
+                    letterSpacing: "0.05em",
+                    marginTop: "2px"
+                  }}
+                >
+                  TKJ • LULUSAN 2026
+                </div>
+              </div>
+
+              <div
+                style={{
+                  padding: "0.3rem 0.6rem",
+                  background: "rgba(229, 9, 20, 0.15)",
+                  border: "1px solid rgba(229, 9, 20, 0.4)",
+                  borderRadius: "6px",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.62rem",
+                  color: "#fff",
+                  fontWeight: 700,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.3rem"
+                }}
+              >
+                <Award size={12} color="var(--color-yellow, #ffe600)" />
+                <span>BNSP CERTIFIED</span>
+              </div>
+            </motion.div>
+
           </div>
 
           {/* Decorative Web Pattern Behind */}
           <div style={{
             position: "absolute",
             top: "50%", left: "50%",
-            transform: "translate(-50%, -50%) scale(1.4)",
+            transform: "translate(-50%, -50%) scale(1.3)",
             width: "100%", height: "100%",
             zIndex: 1,
-            opacity: 0.18,
+            opacity: 0.12,
             pointerEvents: "none",
             backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0 L100 100 M100 0 L0 100 M50 0 L50 100 M0 50 L100 50' stroke='%23ffffff' stroke-width='0.5'/%3E%3Ccircle cx='50' cy='50' r='20' fill='none' stroke='%23e50914' stroke-width='0.5'/%3E%3Ccircle cx='50' cy='50' r='40' fill='none' stroke='%23ffffff' stroke-width='0.5'/%3E%3C/svg%3E\")",
             backgroundSize: "contain",
@@ -582,21 +589,21 @@ export default function Hero() {
             .hero-grid-container { 
               grid-template-columns: 1fr !important; 
               text-align: center;
-              gap: 3rem !important;
-              padding-top: 1.5rem !important;
+              gap: 2.5rem !important;
+              padding-top: 1rem !important;
             }
             .hero-image-col { 
               order: -1 !important;
-              margin: 2rem auto 1rem auto !important;
-              max-width: 290px !important;
+              margin: 1.5rem auto 0.5rem auto !important;
+              max-width: 300px !important;
               width: 100% !important;
             }
             .hero-hanging-spiderman {
-              top: -95px !important;
-              right: -15px !important;
+              top: -65px !important;
+              right: -10px !important;
             }
             .hero-hanging-spiderman img {
-              width: 120px !important;
+              width: 95px !important;
             }
             .hero-text-col {
               display: flex;
@@ -615,12 +622,6 @@ export default function Hero() {
               margin: 0 auto; 
             }
           }
-          @keyframes scanline {
-            0% { top: 0%; opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { top: 100%; opacity: 0; }
-          }
         `}} />
       </div>
 
@@ -629,7 +630,7 @@ export default function Hero() {
         style={{
           position: "absolute",
           bottom: 0, left: 0, right: 0,
-          height: "150px",
+          height: "100px",
           background: "linear-gradient(0deg, var(--color-bg) 0%, transparent 100%)",
           pointerEvents: "none",
           zIndex: 5,
