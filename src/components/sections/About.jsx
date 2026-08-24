@@ -62,7 +62,7 @@ export default function About() {
             {/* Bio Card */}
             <motion.div
               variants={fadeUp}
-              className="neon-card"
+              className="neon-card with-crosshairs"
               style={{
                 padding: "2.25rem",
                 display: "flex",
@@ -156,7 +156,7 @@ export default function About() {
             {/* Personality & Work Ethic Card */}
             <motion.div
               variants={fadeUp}
-              className="neon-card"
+              className="neon-card with-crosshairs"
               style={{
                 padding: "2.25rem",
                 display: "flex",

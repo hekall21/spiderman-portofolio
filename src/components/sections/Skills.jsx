@@ -141,6 +141,7 @@ export default function Skills() {
                   exit={{ opacity: 0, scale: 0.9 }}
                   onMouseEnter={() => setHoveredIndex(index)}
                   onMouseLeave={() => setHoveredIndex(null)}
+                  className="neon-card with-crosshairs"
                   style={{
                     position: "relative",
                     background: "var(--color-panel)",

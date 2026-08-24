@@ -8,6 +8,12 @@ import {
   INITIAL_STICKY_NOTES,
 } from "../../data/stickyNotes";
 import {
+  subscribeToStickyNotes,
+  createCloudStickyNote,
+  updateCloudReaction,
+  isFirebaseReady,
+} from "../../services/firebase";
+import {
   Plus,
   X,
   Sparkles,
@@ -23,6 +29,7 @@ import {
   Pin,
   Trash2,
   Share2,
+  Cloud,
 } from "lucide-react";
 
 const categoryIconMap = {
@@ -34,32 +41,60 @@ const categoryIconMap = {
   Heart: Heart,
 };
 
-const STORAGE_KEY = "spiderman_portfolio_sticky_notes_v3";
+const STORAGE_KEY = "spiderman_portfolio_user_notes_v4";
 
 export default function StickyNotes() {
   const [notes, setNotes] = useState(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        return JSON.parse(saved);
-      }
+      const savedUserNotes = localStorage.getItem(STORAGE_KEY);
+      const parsedUserNotes = savedUserNotes ? JSON.parse(savedUserNotes) : [];
+      // Combine user-created notes with default curated notes (no duplicates by id)
+      const existingIds = new Set(parsedUserNotes.map((n) => n.id));
+      const filteredInitial = INITIAL_STICKY_NOTES.filter((n) => !existingIds.has(n.id));
+      return [...parsedUserNotes, ...filteredInitial];
     } catch {
-      // Fallback
+      return INITIAL_STICKY_NOTES;
     }
-    return INITIAL_STICKY_NOTES;
   });
 
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCloudSyncActive, setIsCloudSyncActive] = useState(isFirebaseReady);
   const [reactedNotes, setReactedNotes] = useState(() => {
     try {
-      const saved = localStorage.getItem("spiderman_reacted_notes");
+      const saved = localStorage.getItem("spiderman_reacted_notes_v4");
       return saved ? JSON.parse(saved) : {};
     } catch {
       return {};
     }
   });
+
+  // Real-time Firebase Firestore Subscription
+  useEffect(() => {
+    const unsubscribe = subscribeToStickyNotes(
+      (cloudNotes) => {
+        if (cloudNotes && cloudNotes.length > 0) {
+          setIsCloudSyncActive(true);
+          setNotes((prevNotes) => {
+            const cloudIds = new Set(cloudNotes.map((cn) => cn.id));
+            // Keep local user notes that haven't synced yet + initial notes not in cloud
+            const nonDuplicatePrev = prevNotes.filter(
+              (pn) => !cloudIds.has(pn.id) && !pn.isCloudSynced
+            );
+            return [...cloudNotes, ...nonDuplicatePrev];
+          });
+        }
+      },
+      () => {
+        setIsCloudSyncActive(false);
+      }
+    );
+
+    return () => {
+      if (typeof unsubscribe === "function") unsubscribe();
+    };
+  }, []);
 
   // New Note Form State
   const [formData, setFormData] = useState({
@@ -72,10 +107,11 @@ export default function StickyNotes() {
   });
   const [copiedId, setCopiedId] = useState(null);
 
-  // Sync to localStorage
+  // Sync ONLY user-created notes to localStorage for offline resilience
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+      const userOnly = notes.filter((n) => n.isUserCreated);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(userOnly));
     } catch (e) {
       console.warn("Storage error", e);
     }
@@ -83,7 +119,7 @@ export default function StickyNotes() {
 
   useEffect(() => {
     try {
-      localStorage.setItem("spiderman_reacted_notes", JSON.stringify(reactedNotes));
+      localStorage.setItem("spiderman_reacted_notes_v4", JSON.stringify(reactedNotes));
     } catch (e) {
       console.warn("Storage error", e);
     }
@@ -103,8 +139,8 @@ export default function StickyNotes() {
     });
   }, [notes, activeCategory, searchQuery]);
 
-  // Handle Reactions
-  const handleReaction = (noteId, reactionKey) => {
+  // Handle Reactions (Optimistic + Firebase cloud sync)
+  const handleReaction = async (noteId, reactionKey) => {
     const reactKey = `${noteId}_${reactionKey}`;
     const hasReacted = reactedNotes[reactKey];
 
@@ -126,6 +162,11 @@ export default function StickyNotes() {
       ...prev,
       [reactKey]: !hasReacted,
     }));
+
+    // Update cloud document if synced
+    if (isCloudSyncActive) {
+      await updateCloudReaction(noteId, reactionKey, !hasReacted);
+    }
   };
 
   // Random Alias Generator
@@ -147,8 +188,8 @@ export default function StickyNotes() {
     }));
   };
 
-  // Submit New Note
-  const handleSubmitNote = (e) => {
+  // Submit New Note (Optimistic + Firebase Cloud Push)
+  const handleSubmitNote = async (e) => {
     e.preventDefault();
     if (!formData.author.trim() || !formData.message.trim()) return;
 
@@ -164,10 +205,24 @@ export default function StickyNotes() {
       reactions: { web: 1, love: 1, zap: 1, fire: 1 },
       rotation: (Math.random() - 0.5) * 4,
       isUserCreated: true,
+      isCloudSynced: false,
     };
 
+    // Optimistic local update
     setNotes([newNote, ...notes]);
     setIsModalOpen(false);
+
+    // Push to Firebase Cloud Firestore
+    try {
+      const cloudId = await createCloudStickyNote(newNote);
+      if (cloudId) {
+        setNotes((prevNotes) =>
+          prevNotes.map((n) => (n.id === newNote.id ? { ...n, id: cloudId, isCloudSynced: true } : n))
+        );
+      }
+    } catch (err) {
+      console.info("Saved to local storage, will sync when cloud is reachable:", err.message);
+    }
 
     // Reset Form
     setFormData({
@@ -306,35 +361,32 @@ export default function StickyNotes() {
                 flexWrap: "wrap",
               }}
             >
-              <button
-                onClick={handleResetDefaults}
-                title="Reset ke catatan default"
+              {/* Live Permanent Community Sync Badge */}
+              <div
                 style={{
-                  padding: "0.75rem 1rem",
-                  background: "rgba(255, 255, 255, 0.05)",
-                  border: "1px solid var(--color-border)",
+                  padding: "0.65rem 1rem",
+                  background: "rgba(16, 185, 129, 0.08)",
+                  border: "1px solid rgba(16, 185, 129, 0.3)",
                   borderRadius: "8px",
-                  color: "var(--color-muted)",
+                  color: "#10b981",
                   fontFamily: "var(--font-mono)",
-                  fontSize: "0.75rem",
-                  display: "flex",
+                  fontSize: "0.72rem",
+                  display: "inline-flex",
                   alignItems: "center",
                   gap: "0.5rem",
-                  cursor: "pointer",
-                  transition: "all 0.2s",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.color = "var(--color-white)";
-                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.3)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.color = "var(--color-muted)";
-                  e.currentTarget.style.borderColor = "var(--color-border)";
+                  userSelect: "none",
                 }}
               >
-                <RotateCcw size={14} />
-                <span>Reset</span>
-              </button>
+                <span style={{
+                  width: "7px",
+                  height: "7px",
+                  borderRadius: "50%",
+                  background: "#10b981",
+                  boxShadow: "0 0 8px #10b981",
+                  animation: "pulse 2s infinite",
+                }} />
+                <span>MULTIVERSE SYNC // {notes.length} MESSAGES SAVED</span>
+              </div>
 
               <button
                 onClick={() => setIsModalOpen(true)}

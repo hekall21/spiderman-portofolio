@@ -5,6 +5,7 @@ export const profile = {
     last: "SALEH",
     full: "Muhammad Haikel Saleh",
   },
+  image: "/profile.jpg",
   tagline: "Fresh Graduate | IT & Administrative Support",
   status: "Fresh Graduate",
   field: "Teknik Komputer dan Jaringan",

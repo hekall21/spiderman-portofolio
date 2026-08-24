@@ -64,7 +64,7 @@ export default function Certificates() {
           {certificates.map((cert) => (
             <motion.div key={cert.id} variants={fadeUp}>
               <div
-                className="neon-card"
+                className="neon-card with-crosshairs"
                 onClick={() => setSelectedCert(cert)}
                 role="button"
                 tabIndex={0}

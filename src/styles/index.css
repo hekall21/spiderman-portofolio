@@ -521,13 +521,31 @@ img { max-width: 100%; display: block; }
   gap: 0.75rem;
 }
 
+@media (max-width: 1023px) {
+  .hero-grid-container {
+    grid-template-columns: 1fr !important;
+    gap: 3rem !important;
+    padding-top: 1rem !important;
+  }
+  .hero-image-col {
+    order: -1; /* Display clean photo near top on tablets/mobile */
+    width: 100%;
+    max-width: 320px !important;
+    margin: 0 auto !important;
+  }
+}
+
 @media (max-width: 768px) {
-  .noise-overlay, .scanlines {
+  .noise-overlay, .scanlines, .cad-laser-cursor-container {
     display: none !important;
   }
   
   .vignette {
     opacity: 0.4 !important;
+  }
+
+  .hero-grid-container {
+    gap: 2rem !important;
   }
 
   /* GPU-Accelerated Hardware Layers on Mobile */
@@ -569,4 +587,71 @@ img { max-width: 100%; display: block; }
   }
 }
 
+/* ══════════════════════════════════════════════
+   PRECISION CAD & KINETIC ENHANCEMENTS (DESIGN_4 / DESIGN_2)
+   ══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .hidden-mobile {
+    display: none !important;
+  }
+  .precision-hud-bar {
+    top: 72px;
+    height: 24px;
+    font-size: 0.62rem;
+  }
+}
 
+/* Corner Crosshairs (+) on Cards */
+.with-crosshairs {
+  position: relative;
+}
+.with-crosshairs::before {
+  content: "+";
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgba(229, 9, 20, 0.7);
+  pointer-events: none;
+}
+.with-crosshairs::after {
+  content: "+";
+  position: absolute;
+  bottom: -6px;
+  right: -6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgba(0, 240, 255, 0.7);
+  pointer-events: none;
+}
+
+/* Dual-State Vertical Sliding Text Button */
+.btn-slide-wrap {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  flex-direction: column;
+}
+.btn-slide-wrap .label-top {
+  display: block;
+  transform: translateY(0%);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-slide-wrap .label-bot {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+button:hover .btn-slide-wrap .label-top,
+a:hover .btn-slide-wrap .label-top {
+  transform: translateY(-100%);
+}
+button:hover .btn-slide-wrap .label-bot,
+a:hover .btn-slide-wrap .label-bot {
+  transform: translateY(0%);
+}

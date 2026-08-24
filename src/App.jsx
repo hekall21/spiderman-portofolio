@@ -15,6 +15,7 @@ import MusicPlayer from "./components/common/MusicPlayer";
 import TerminalBoot from "./components/common/TerminalBoot";
 import HangingSpiders from "./components/common/HangingSpiders";
 import QuickDock from "./components/common/QuickDock";
+import PrecisionHUD from "./components/common/PrecisionHUD";
 import { useState } from "react";
 
 export default function App() {
@@ -45,6 +46,9 @@ export default function App() {
 
           {/* Navigation */}
           <Navbar />
+
+          {/* Precision Telemetry HUD (Heron AI Coordinate System) */}
+          <PrecisionHUD />
 
           {/* Quick Floating Dock */}
           <QuickDock />
