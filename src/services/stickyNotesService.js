@@ -2,7 +2,7 @@
  * =========================================================================
  * 🕷️ SPIDER-MAN PORTFOLIO - COMMUNITY STICKY NOTES SERVICE (GOOGLE APPS SCRIPT)
  * =========================================================================
- * Multi-Device Real-Time Sync via Google Sheets API (Serverless, No-Cost)
+ * Multi-Device & Mobile Real-Time Sync via Google Sheets API (Serverless, No-Cost)
  * =========================================================================
  */
 
@@ -10,16 +10,16 @@ import { INITIAL_STICKY_NOTES } from "../data/stickyNotes";
 
 // URL Google Apps Script Web App (diambil dari environment variable atau fallback aktif)
 const GOOGLE_APPSCRIPT_URL =
-  import.meta.env.VITE_APPSCRIPT_URL || "https://script.google.com/macros/s/AKfycbwPIWN5zgvwiiEz2PMK6rHSVWMk5pqtcrb3ZCDR7_eNHNBX457ZTMaY5nFFPXBBzcMhWg/exec";
+  import.meta.env.VITE_APPSCRIPT_URL ||
+  "https://script.google.com/macros/s/AKfycbwPIWN5zgvwiiEz2PMK6rHSVWMk5pqtcrb3ZCDR7_eNHNBX457ZTMaY5nFFPXBBzcMhWg/exec";
 
-// Storage key untuk fallback lokal
+// Storage key untuk sinkronisasi lokal
 const STORAGE_KEY = "spiderman_portfolio_user_notes_v6";
 const STORAGE_REACTED_KEY = "spiderman_reacted_notes_v6";
 
-/**
- * Cek apakah backend Google Apps Script sudah terkonfigurasi
- */
-export const isCloudConfigured = Boolean(GOOGLE_APPSCRIPT_URL && GOOGLE_APPSCRIPT_URL.startsWith("http"));
+export const isCloudConfigured = Boolean(
+  GOOGLE_APPSCRIPT_URL && GOOGLE_APPSCRIPT_URL.startsWith("http")
+);
 
 /**
  * Mengambil seluruh Sticky Notes dari Google Sheets
@@ -31,58 +31,87 @@ export async function fetchGlobalCloudNotes() {
   }
 
   try {
-    const response = await fetch(GOOGLE_APPSCRIPT_URL, {
-      method: "GET",
-      redirect: "follow",
-      cache: "no-store",
-    });
+    const response = await fetch(
+      `${GOOGLE_APPSCRIPT_URL}?t=${Date.now()}`,
+      {
+        method: "GET",
+        redirect: "follow",
+        cache: "no-store",
+      }
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
 
-    const result = await response.json();
+    const text = await response.text();
+    // Validasi apakah respon adalah JSON valid (bukan HTML error page)
+    if (!text.trim().startsWith("{") && !text.trim().startsWith("[")) {
+      throw new Error("Respon bukan JSON valid");
+    }
+
+    const result = JSON.parse(text);
     if (result && result.success && Array.isArray(result.notes)) {
+      // Perbarui cache lokal dengan data cloud terbaru
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(result.notes));
+      } catch (e) {}
       return result.notes;
     }
 
     return getLocalFallbackNotes();
   } catch (err) {
-    console.info("Info: Menggunakan cache lokal (Google Sheets sync standby):", err.message);
+    console.info("Info: Memuat cache lokal:", err.message);
     return getLocalFallbackNotes();
   }
 }
 
 /**
- * Mengirim sticky note baru ke Google Sheets (Real-Time Cloud Push)
+ * Mengirim sticky note baru ke Google Sheets dengan mekanisme Retry untuk Mobile/HP
  * @param {Object} newNote 
  * @returns {Promise<boolean>} Status berhasil
  */
 export async function createCloudStickyNote(newNote) {
-  // 1. Simpan selalu ke localStorage sebagai cache offline
+  // 1. Simpan segera ke localStorage lokal
   saveNoteLocally(newNote);
 
   if (!GOOGLE_APPSCRIPT_URL) {
     return true;
   }
 
-  try {
-    await fetch(GOOGLE_APPSCRIPT_URL, {
+  const payload = JSON.stringify({
+    action: "createNote",
+    note: newNote,
+  });
+
+  const sendPost = async () => {
+    const response = await fetch(GOOGLE_APPSCRIPT_URL, {
       method: "POST",
-      mode: "no-cors",
+      redirect: "follow",
       cache: "no-cache",
       headers: {
         "Content-Type": "text/plain;charset=utf-8",
       },
-      body: JSON.stringify({
-        action: "createNote",
-        note: newNote,
-      }),
+      body: payload,
     });
+    return response;
+  };
+
+  try {
+    // Percobaan pertama
+    await sendPost();
     return true;
   } catch (err) {
-    console.warn("Google Apps Script sync warning (tersimpan di lokal):", err.message);
-    return false;
+    console.warn("Retrying cloud push for mobile connection...", err.message);
+    try {
+      // Retry sekali setelah jeda 1 detik untuk koneksi HP/mobile
+      await new Promise((res) => setTimeout(res, 1000));
+      await sendPost();
+      return true;
+    } catch (retryErr) {
+      console.warn("Cloud push warning (tersimpan di lokal):", retryErr.message);
+      return false;
+    }
   }
 }
 
@@ -98,7 +127,7 @@ export async function updateCloudReaction(noteId, reactionKey, isAdding = true) 
   try {
     await fetch(GOOGLE_APPSCRIPT_URL, {
       method: "POST",
-      mode: "no-cors",
+      redirect: "follow",
       cache: "no-cache",
       headers: {
         "Content-Type": "text/plain;charset=utf-8",
@@ -116,56 +145,67 @@ export async function updateCloudReaction(noteId, reactionKey, isAdding = true) 
 }
 
 /**
- * Polling update real-time secara hemat resource (tanpa bikin laptop panas)
+ * Polling update real-time pintar (hemat kuota & baterai HP, auto pause saat tab tidak aktif)
  * @param {Function} onNotesReceived - Callback saat ada data catatan baru
- * @param {number} intervalMs - Interval polling (default 12000ms / 12 detik)
+ * @param {number} intervalMs - Interval polling (default 18000ms / 18 detik)
  * @returns {Function} Unsubscribe cleanup function
  */
-export function subscribeToStickyNotes(onNotesReceived, intervalMs = 6000) {
+export function subscribeToStickyNotes(onNotesReceived, intervalMs = 18000) {
   let isMounted = true;
   let lastNotesHash = "";
+  let isSyncing = false;
 
   const sync = async () => {
-    if (!isMounted) return;
+    if (!isMounted || isSyncing) return;
+    if (document.hidden) return; // Jangan request jika tab di HP/laptop sedang diminimize
+
+    isSyncing = true;
     try {
       const notes = await fetchGlobalCloudNotes();
       if (!isMounted || !Array.isArray(notes)) return;
 
-      // Cek apakah data berubah sebelum memicu re-render
-      const currentHash = JSON.stringify(notes.map((n) => `${n.id}_${JSON.stringify(n.reactions)}`));
+      const currentHash = JSON.stringify(
+        notes.map((n) => `${n.id}_${JSON.stringify(n.reactions)}`)
+      );
       if (currentHash !== lastNotesHash) {
         lastNotesHash = currentHash;
         onNotesReceived(notes);
       }
     } catch (e) {
-      // Abaikan error background sync secara graceful
+      // Silent error handler
+    } finally {
+      isSyncing = false;
     }
   };
 
-  // 1. Initial fetch segera saat komponen dimuat
+  // 1. Initial fetch segera saat dimuat
   sync();
 
-  // 2. Interval polling berkala hemat daya
+  // 2. Interval polling berkala
   const intervalId = setInterval(sync, intervalMs);
 
-  // 3. Sync instan saat pengguna kembali membuka tab browser
-  const onFocus = () => {
-    sync();
+  // 3. Sync instan saat pengguna kembali membuka browser/HP
+  const onWakeup = () => {
+    if (!document.hidden) {
+      sync();
+    }
   };
 
-  window.addEventListener("focus", onFocus);
-  window.addEventListener("online", onFocus);
+  window.addEventListener("focus", onWakeup);
+  window.addEventListener("visibilitychange", onWakeup);
+  window.addEventListener("online", onWakeup);
 
   return () => {
     isMounted = false;
     clearInterval(intervalId);
-    window.removeEventListener("focus", onFocus);
-    window.removeEventListener("online", onFocus);
+    window.removeEventListener("focus", onWakeup);
+    window.removeEventListener("visibilitychange", onWakeup);
+    window.removeEventListener("online", onWakeup);
   };
 }
 
 /**
- * Helper: Ambil catatan gabungan dari localStorage + Initial Notes
+ * Helper: Ambil catatan gabungan dari localStorage
  */
 function getLocalFallbackNotes() {
   try {

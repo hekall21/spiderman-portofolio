@@ -58,6 +58,7 @@ export default function StickyNotes() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCloudSyncActive, setIsCloudSyncActive] = useState(true);
   const [reactedNotes, setReactedNotes] = useState(() => {
     try {
@@ -193,7 +194,7 @@ export default function StickyNotes() {
   // Submit New Note (Optimistic + Universal Real-Time Cloud Push)
   const handleSubmitNote = async (e) => {
     e.preventDefault();
-    if (!formData.author.trim() || !formData.message.trim()) return;
+    if (!formData.author.trim() || !formData.message.trim() || isSubmitting) return;
 
     const newNote = {
       id: `user-note-${Date.now()}`,
@@ -215,14 +216,19 @@ export default function StickyNotes() {
     setActiveCategory("all");
     setSearchQuery("");
 
+    setIsSubmitting(true);
     // Optimistic local update
     setNotes((prevNotes) => [newNote, ...prevNotes]);
-    setIsModalOpen(false);
 
-    // Push to Universal Cross-Device Cloud DB (Syncs immediately with HP & Laptop)
-    createCloudStickyNote(newNote).catch((err) => {
+    try {
+      // Push to Universal Cross-Device Cloud DB (Syncs immediately with HP & Laptop)
+      await createCloudStickyNote(newNote);
+    } catch (err) {
       console.warn("Cloud push note saved locally:", err);
-    });
+    } finally {
+      setIsSubmitting(false);
+      setIsModalOpen(false);
+    }
 
     // Reset Form
     setFormData({
@@ -1109,15 +1115,17 @@ export default function StickyNotes() {
 
                   <button
                     type="submit"
+                    disabled={isSubmitting}
                     className="btn-primary"
                     style={{
                       padding: "0.75rem 1.5rem",
                       fontSize: "0.75rem",
-                      cursor: "pointer",
+                      cursor: isSubmitting ? "not-allowed" : "pointer",
+                      opacity: isSubmitting ? 0.7 : 1,
                     }}
                   >
                     <Pin size={14} />
-                    <span>TEMPELKAN SEKARANG</span>
+                    <span>{isSubmitting ? "MENEMPELKAN KE WEB..." : "TEMPELKAN SEKARANG"}</span>
                   </button>
                 </div>
               </form>
