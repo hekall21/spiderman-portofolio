@@ -1,13 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
 export default function PrecisionHUD() {
-  const [coords, setCoords] = useState({ x: 1131, y: 1131 });
+  const coordsRef = useRef(null);
   const [timeStr, setTimeStr] = useState("");
 
   useEffect(() => {
+    let rafId = null;
     const handleMouseMove = (e) => {
-      setCoords({ x: e.clientX, y: e.clientY });
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        if (coordsRef.current) {
+          coordsRef.current.innerText = `X:${e.clientX}PX Y:${e.clientY}PX`;
+        }
+        rafId = null;
+      });
     };
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
     
@@ -20,6 +27,7 @@ export default function PrecisionHUD() {
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
+      if (rafId) cancelAnimationFrame(rafId);
       clearInterval(timer);
     };
   }, []);
@@ -91,8 +99,8 @@ export default function PrecisionHUD() {
       <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
           <span style={{ color: "rgba(255, 255, 255, 0.4)" }}>COORD:</span>
-          <span style={{ color: "var(--color-cyan, #00f0ff)", fontWeight: 600 }}>
-            X:{coords.x}PX Y:{coords.y}PX
+          <span ref={coordsRef} style={{ color: "var(--color-cyan, #00f0ff)", fontWeight: 600 }}>
+            X:0PX Y:0PX
           </span>
         </div>
 

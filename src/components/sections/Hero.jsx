@@ -97,20 +97,7 @@ const GlitchText = ({ text }) => {
 export default function Hero() {
   const typedRole = useTypewriter(profile.roles, 55, 25, 2200);
   const shouldReduceMotion = useReducedMotion();
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [spideyAction, setSpideyAction] = useState(false);
-
-  useEffect(() => {
-    if (shouldReduceMotion || window.innerWidth < 1024) return;
-    const handleMouseMove = (e) => {
-      setMousePos({
-        x: (e.clientX - window.innerWidth / 2) * 0.015,
-        y: (e.clientY - window.innerHeight / 2) * 0.015,
-      });
-    };
-    window.addEventListener("mousemove", handleMouseMove, { passive: true });
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, [shouldReduceMotion]);
 
   const handleSpideyClick = () => {
     setSpideyAction(true);
@@ -497,8 +484,6 @@ export default function Hero() {
           animate="visible"
           style={{
             position: "relative",
-            transform: shouldReduceMotion ? "none" : `translate(${mousePos.x}px, ${mousePos.y}px)`,
-            transition: "transform 0.15s ease-out",
           }}
           className="hero-image-col"
         >
