@@ -67,10 +67,10 @@ export async function createCloudStickyNote(newNote) {
   }
 
   try {
-    const response = await fetch(GOOGLE_APPSCRIPT_URL, {
+    await fetch(GOOGLE_APPSCRIPT_URL, {
       method: "POST",
-      mode: "cors",
-      redirect: "follow",
+      mode: "no-cors",
+      cache: "no-cache",
       headers: {
         "Content-Type": "text/plain;charset=utf-8",
       },
@@ -79,13 +79,7 @@ export async function createCloudStickyNote(newNote) {
         note: newNote,
       }),
     });
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data && data.success;
+    return true;
   } catch (err) {
     console.warn("Google Apps Script sync warning (tersimpan di lokal):", err.message);
     return false;
@@ -104,6 +98,8 @@ export async function updateCloudReaction(noteId, reactionKey, isAdding = true) 
   try {
     await fetch(GOOGLE_APPSCRIPT_URL, {
       method: "POST",
+      mode: "no-cors",
+      cache: "no-cache",
       headers: {
         "Content-Type": "text/plain;charset=utf-8",
       },

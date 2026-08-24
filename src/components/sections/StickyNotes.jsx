@@ -76,9 +76,9 @@ export default function StickyNotes() {
           setIsCloudSyncActive(true);
           setNotes((prevNotes) => {
             const cloudIds = new Set(cloudNotes.map((cn) => cn.id));
-            const now = Date.now();
+            // Keep local user-created notes until confirmed present in Google Sheets
             const pendingUnsynced = prevNotes.filter(
-              (pn) => pn.isPending && !cloudIds.has(pn.id) && (now - (pn.submittedAt || 0) < 15000)
+              (pn) => pn.isPending && !cloudIds.has(pn.id)
             );
             return [...pendingUnsynced, ...cloudNotes];
           });
