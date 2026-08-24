@@ -3,10 +3,11 @@ import { useState, useEffect } from "react";
 const SECTIONS = [
   "hero",
   "about",
-  "expertise",
+  "skills",
   "experience",
   "education",
   "certificates",
+  "notes",
   "contact",
 ];
 

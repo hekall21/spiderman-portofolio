@@ -7,11 +7,14 @@ import Hero from "./components/sections/Hero";
 import About from "./components/sections/About";
 import Skills from "./components/sections/Skills";
 import Experience from "./components/sections/Experience";
+import Education from "./components/sections/Education";
 import Certificates from "./components/sections/Certificates";
+import StickyNotes from "./components/sections/StickyNotes";
 import Contact from "./components/sections/Contact";
 import MusicPlayer from "./components/common/MusicPlayer";
 import TerminalBoot from "./components/common/TerminalBoot";
 import HangingSpiders from "./components/common/HangingSpiders";
+import QuickDock from "./components/common/QuickDock";
 import { useState } from "react";
 
 export default function App() {
@@ -29,6 +32,7 @@ export default function App() {
           {/* Global cinematic overlays */}
           <div className="noise-overlay" />
           <div className="vignette" />
+          <div className="scanlines" />
           
           {/* Spider Animations */}
           <HangingSpiders />
@@ -42,6 +46,9 @@ export default function App() {
           {/* Navigation */}
           <Navbar />
 
+          {/* Quick Floating Dock */}
+          <QuickDock />
+
           {/* Main content */}
           <main>
             <Hero />
@@ -49,7 +56,9 @@ export default function App() {
             <About />
             <Skills />
             <Experience />
+            <Education />
             <Certificates />
+            <StickyNotes />
             <Contact />
           </main>
 

@@ -3,7 +3,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { profile } from "../../data/profile";
 import WebBackground from "../common/WebBackground";
 import { staggerContainer, fadeUp, fadeIn } from "../../animations/variants";
-import { MapPin, ArrowUpRight } from "lucide-react";
+import { MapPin, ArrowUpRight, Sparkles, Terminal, Shield, Zap, ArrowRight, ShieldCheck } from "lucide-react";
 
 function useTypewriter(words, typingSpeed = 60, deletingSpeed = 30, pause = 2000) {
   const [text, setText] = useState("");
@@ -68,8 +68,8 @@ const GlitchText = ({ text }) => {
       }, 30);
     };
 
-    triggerGlitch(); // Initial trigger
-    const loop = setInterval(triggerGlitch, 5000); // Trigger every 5 seconds
+    triggerGlitch();
+    const loop = setInterval(triggerGlitch, 5000);
     
     return () => {
       clearInterval(interval);
@@ -94,6 +94,7 @@ export default function Hero() {
   const typedRole = useTypewriter(profile.roles, 60, 30, 2000);
   const shouldReduceMotion = useReducedMotion();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [spideyAction, setSpideyAction] = useState(false);
 
   useEffect(() => {
     if (shouldReduceMotion || window.innerWidth < 1024) return;
@@ -107,6 +108,11 @@ export default function Hero() {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, [shouldReduceMotion]);
 
+  const handleSpideyClick = () => {
+    setSpideyAction(true);
+    setTimeout(() => setSpideyAction(false), 1200);
+  };
+
   return (
     <section
       id="hero"
@@ -116,7 +122,8 @@ export default function Hero() {
         display: "flex",
         alignItems: "center",
         overflow: "hidden",
-        paddingTop: "72px" // Account for navbar
+        paddingTop: "90px",
+        paddingBottom: "4rem",
       }}
     >
       <WebBackground variant="hero" />
@@ -124,15 +131,15 @@ export default function Hero() {
       {/* Cinematic glows */}
       <div style={{
         position: "absolute", top: "10%", left: "10%",
-        width: "40vw", height: "40vw", borderRadius: "50%",
-        background: "var(--color-red)", filter: "blur(200px)",
-        opacity: 0.15, pointerEvents: "none", zIndex: 0
+        width: "45vw", height: "45vw", borderRadius: "50%",
+        background: "var(--color-red)", filter: "blur(220px)",
+        opacity: 0.18, pointerEvents: "none", zIndex: 0
       }} />
       <div style={{
         position: "absolute", bottom: "10%", right: "10%",
-        width: "40vw", height: "40vw", borderRadius: "50%",
-        background: "var(--color-purple)", filter: "blur(200px)",
-        opacity: 0.15, pointerEvents: "none", zIndex: 0
+        width: "45vw", height: "45vw", borderRadius: "50%",
+        background: "var(--color-purple)", filter: "blur(220px)",
+        opacity: 0.18, pointerEvents: "none", zIndex: 0
       }} />
 
       {/* Content Container */}
@@ -141,14 +148,14 @@ export default function Hero() {
         style={{
           position: "relative",
           zIndex: 2,
-          maxWidth: "1200px",
+          maxWidth: "1280px",
           margin: "0 auto",
           width: "100%",
-          padding: "0 clamp(1.25rem, 5vw, 2rem)",
+          padding: "0 clamp(1.25rem, 4vw, 2.5rem)",
           display: "grid",
-          gridTemplateColumns: "1.2fr 0.8fr",
+          gridTemplateColumns: "1.15fr 0.85fr",
           alignItems: "center",
-          gap: "4rem"
+          gap: "3.5rem",
         }}
       >
         {/* Left Column - Text Content */}
@@ -158,13 +165,55 @@ export default function Hero() {
           animate="visible"
           className="hero-text-col"
         >
+          {/* Cyberpunk HUD Badge */}
+          <motion.div
+            variants={fadeUp}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.6rem",
+              padding: "0.45rem 1rem",
+              background: "rgba(229, 9, 20, 0.1)",
+              border: "1px solid rgba(229, 9, 20, 0.35)",
+              borderRadius: "30px",
+              marginBottom: "1.25rem",
+              backdropFilter: "blur(10px)",
+              boxShadow: "0 0 15px rgba(229, 9, 20, 0.2)",
+            }}
+          >
+            <span
+              style={{
+                width: "8px",
+                height: "8px",
+                borderRadius: "50%",
+                background: "#10b981",
+                boxShadow: "0 0 10px #10b981",
+                display: "inline-block",
+                animation: "pulse 2s infinite",
+              }}
+            />
+            <span
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "clamp(0.68rem, 2vw, 0.75rem)",
+                color: "var(--color-white)",
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                fontWeight: 600,
+              }}
+            >
+              SPIDER-PROTOCOL // ACTIVE & READY
+            </span>
+          </motion.div>
+
           {/* Greeting */}
-          <motion.div variants={fadeUp} style={{ marginBottom: "1.5rem" }}>
+          <motion.div variants={fadeUp} style={{ marginBottom: "0.25rem" }}>
             <span style={{
               fontFamily: "var(--font-decorative)",
               fontSize: "clamp(2rem, 5vw, 3.5rem)",
               color: "var(--color-red)",
-              textShadow: "0 0 10px rgba(229,9,20,0.4)",
+              textShadow: "0 0 15px rgba(229,9,20,0.6)",
+              display: "block",
             }}>
               Hi, I'm
             </span>
@@ -173,73 +222,126 @@ export default function Hero() {
           {/* Name */}
           <div style={{
             fontFamily: "var(--font-display)",
-            fontSize: "clamp(2rem, 8vw, 5.5rem)",
+            fontSize: "clamp(2.2rem, 7vw, 5.2rem)",
             fontWeight: 800,
-            lineHeight: 1.1,
+            lineHeight: 1.05,
             textTransform: "uppercase",
             letterSpacing: "-0.02em",
             color: "var(--color-white)",
-            marginBottom: "0.5rem"
+            marginBottom: "1rem",
           }}>
-            <motion.div variants={fadeUp}>Muhammad</motion.div>
-            <div className="gradient-text text-glow-red" style={{ paddingBottom: "10px" }}>
-              <GlitchText text="Haikel Saleh" />
+            <motion.div variants={fadeUp}>MUHAMMAD</motion.div>
+            <div className="gradient-text text-glow-red" style={{ paddingBottom: "4px" }}>
+              <GlitchText text="HAIKEL SALEH" />
             </div>
           </div>
 
-          {/* Typewriter role */}
+          {/* Typewriter role with HUD styling */}
           <motion.div variants={fadeUp} style={{
-            marginTop: "1.5rem",
+            marginTop: "0.5rem",
             fontFamily: "var(--font-mono)",
-            fontSize: "clamp(0.9rem, 1.5vw, 1.25rem)",
+            fontSize: "clamp(0.85rem, 1.4vw, 1.15rem)",
             color: "var(--color-text)",
-            display: "flex",
+            display: "inline-flex",
             alignItems: "center",
-            gap: "0.75rem",
-            flexWrap: "wrap"
+            gap: "0.6rem",
+            flexWrap: "wrap",
+            background: "rgba(10, 15, 26, 0.75)",
+            padding: "0.55rem 1.1rem",
+            borderRadius: "8px",
+            border: "1px solid rgba(172, 75, 255, 0.3)",
+            boxShadow: "0 0 20px rgba(172, 75, 255, 0.15)",
           }}>
-            <span style={{ color: "var(--color-purple)" }}>Role:</span>
-            <span style={{ color: "var(--color-white)", fontWeight: 600 }}>{typedRole}</span>
+            <Terminal size={16} color="var(--color-red)" />
+            <span style={{ color: "var(--color-purple)", fontWeight: 700 }}>ROLE:</span>
+            <span style={{ color: "var(--color-white)", fontWeight: 700 }}>{typedRole}</span>
             <span className="typewriter-cursor" />
           </motion.div>
 
           {/* Description */}
           <motion.p variants={fadeUp} style={{
-            marginTop: "2rem",
+            marginTop: "1.5rem",
             fontFamily: "var(--font-body)",
-            fontSize: "0.95rem",
+            fontSize: "clamp(0.88rem, 1.5vw, 0.96rem)",
             lineHeight: 1.8,
-            color: "var(--color-muted)",
-            maxWidth: "540px",
+            color: "var(--color-text)",
+            maxWidth: "580px",
           }}>
             {profile.description}
           </motion.p>
 
-          {/* Location / Status Badge */}
+          {/* Location & Quick Tags */}
           <motion.div variants={fadeUp} style={{
-            marginTop: "2rem",
-            display: "inline-flex",
+            marginTop: "1.75rem",
+            display: "flex",
             alignItems: "center",
-            gap: "0.5rem",
-            padding: "0.5rem 1rem",
-            background: "rgba(255,255,255,0.03)",
-            border: "1px solid rgba(255,255,255,0.08)",
-            borderRadius: "100px",
-            fontFamily: "var(--font-mono)",
-            fontSize: "0.75rem",
-            color: "var(--color-text)"
+            gap: "0.75rem",
+            flexWrap: "wrap",
           }}>
-            <MapPin size={14} color="var(--color-red)" />
-            {profile.location} <span style={{ color: "var(--color-purple)", margin: "0 0.5rem" }}>|</span> Open to Work
+            <div style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.4rem",
+              padding: "0.45rem 0.85rem",
+              background: "rgba(255,255,255,0.04)",
+              border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: "8px",
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.75rem",
+              color: "var(--color-white)"
+            }}>
+              <MapPin size={13} color="var(--color-red)" />
+              <span>{profile.location}</span>
+            </div>
+
+            <div style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.4rem",
+              padding: "0.45rem 0.85rem",
+              background: "rgba(172, 75, 255, 0.1)",
+              border: "1px solid rgba(172, 75, 255, 0.3)",
+              borderRadius: "8px",
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.75rem",
+              color: "var(--color-purple)",
+              fontWeight: 600,
+            }}>
+              <Shield size={13} />
+              <span>TKJ SMKN 22 Jakarta</span>
+            </div>
+
+            <div style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.4rem",
+              padding: "0.45rem 0.85rem",
+              background: "rgba(48, 128, 255, 0.1)",
+              border: "1px solid rgba(48, 128, 255, 0.3)",
+              borderRadius: "8px",
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.75rem",
+              color: "var(--color-blue-light)",
+              fontWeight: 600,
+            }}>
+              <Zap size={13} />
+              <span>Accounting PKL GAP</span>
+            </div>
           </motion.div>
 
           {/* CTAs */}
-          <motion.div variants={fadeUp} className="hero-ctas" style={{ marginTop: "3rem", display: "flex", gap: "1.5rem", flexWrap: "wrap" }}>
+          <motion.div variants={fadeUp} className="hero-ctas" style={{ marginTop: "2.5rem", display: "flex", gap: "1rem", flexWrap: "wrap" }}>
             <a href="#skills" className="btn-primary" onClick={(e) => {
               e.preventDefault();
               document.getElementById("skills")?.scrollIntoView({ behavior: "smooth" });
             }}>
               EXPLORE SKILLS <ArrowUpRight size={16} />
+            </a>
+            <a href="#notes" className="btn-secondary" onClick={(e) => {
+              e.preventDefault();
+              document.getElementById("notes")?.scrollIntoView({ behavior: "smooth" });
+            }}>
+              <Sparkles size={14} /> SPIDER-BOARD
             </a>
             <a href="#contact" className="btn-secondary" onClick={(e) => {
               e.preventDefault();
@@ -250,7 +352,7 @@ export default function Hero() {
           </motion.div>
         </motion.div>
 
-        {/* Right Column - Profile Image & Visuals */}
+        {/* Right Column - Profile Image with ICONIC HANGING SPIDER-MAN */}
         <motion.div
           variants={fadeIn}
           initial="hidden"
@@ -263,41 +365,104 @@ export default function Hero() {
           className="hero-image-col"
         >
           {/* Main Photo Container */}
-          <div style={{ position: "relative", width: "100%", maxWidth: "340px", margin: "0 auto", zIndex: 2 }}>
+          <div style={{ position: "relative", width: "100%", maxWidth: "360px", margin: "0 auto", zIndex: 2 }}>
             
-            {/* Hanging Spiderman */}
+            {/* ══════════════════════════════════════════════
+               PROMINENT HANGING SPIDER-MAN WITH WEB THREAD
+               ══════════════════════════════════════════════ */}
             <motion.div
-               className="hero-hanging-spiderman"
-               style={{ 
-                 position: "absolute", top: "-50px", right: "-30px", zIndex: 10,
-                 filter: "drop-shadow(0 15px 30px rgba(0,0,0,0.8))"
-               }}
-               animate={shouldReduceMotion ? {} : { y: [0, 8, 0], rotate: [-2, 2, -2] }}
-               transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+              onClick={handleSpideyClick}
+              title="Klik Spider-Man untuk aksi web swing!"
+              className="hero-hanging-spiderman"
+              style={{ 
+                position: "absolute",
+                top: "-110px",
+                right: "-35px",
+                zIndex: 20,
+                cursor: "pointer",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                transformOrigin: "top center",
+              }}
+              animate={
+                spideyAction
+                  ? { y: [0, -30, 15, 0], rotate: [0, 360, -10, 0], scale: [1, 1.2, 1] }
+                  : shouldReduceMotion
+                  ? {}
+                  : { y: [0, 15, 0], rotate: [-4, 4, -4] }
+              }
+              transition={
+                spideyAction
+                  ? { duration: 1.1, ease: "easeInOut" }
+                  : { repeat: Infinity, duration: 4.2, ease: "easeInOut" }
+              }
             >
-              <img 
-                src="/spiderman-transparent.png" 
-                alt="Spider-Man" 
-                style={{ width: "110px" }}
+              {/* Luminous Web Line Dropping From Sky */}
+              <div
+                style={{
+                  width: "2px",
+                  height: "90px",
+                  background: "linear-gradient(180deg, rgba(255,255,255,0.8), var(--color-red), rgba(255,255,255,0.4))",
+                  boxShadow: "0 0 10px rgba(255,255,255,0.8), 0 0 20px var(--color-red)",
+                  marginBottom: "-8px",
+                  zIndex: 1,
+                }}
               />
+
+              {/* Upside Down Spider-Man */}
+              <motion.img 
+                src="/spiderman-transparent.png" 
+                alt="Hanging Spider-Man" 
+                whileHover={{ scale: 1.1 }}
+                style={{
+                  width: "150px",
+                  filter: "drop-shadow(0 15px 30px rgba(0,0,0,0.9)) drop-shadow(0 0 25px rgba(229,9,20,0.7))",
+                  display: "block",
+                  zIndex: 2,
+                }}
+              />
+
+              {/* Interactive Callout Tooltip */}
+              <motion.div
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: [0.7, 1, 0.7] }}
+                transition={{ repeat: Infinity, duration: 2.5 }}
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.62rem",
+                  color: "#fff",
+                  background: "rgba(229, 9, 20, 0.85)",
+                  padding: "0.2rem 0.6rem",
+                  borderRadius: "100px",
+                  marginTop: "-10px",
+                  letterSpacing: "0.08em",
+                  boxShadow: "0 0 10px rgba(229,9,20,0.5)",
+                  border: "1px solid rgba(255,255,255,0.3)",
+                  whiteSpace: "nowrap",
+                  zIndex: 3,
+                }}
+              >
+                🕸️ SPIDEY PATROL
+              </motion.div>
             </motion.div>
 
-            {/* Profile Photo */}
+            {/* Profile Photo Frame */}
             <div className="neon-card" style={{ 
               width: "100%", 
               aspectRatio: "3/4", 
               borderRadius: "20px", 
               padding: "10px",
-              background: "rgba(10,15,26,0.6)",
-              border: "1px solid var(--color-purple)",
-              boxShadow: "0 0 40px rgba(172,75,255,0.2), inset 0 0 20px rgba(172,75,255,0.1)",
+              background: "linear-gradient(135deg, rgba(10,15,26,0.8) 0%, rgba(20,10,25,0.8) 100%)",
+              border: "1px solid var(--color-red)",
+              boxShadow: "0 20px 50px rgba(0,0,0,0.8), 0 0 35px rgba(229,9,20,0.25), inset 0 0 20px rgba(172,75,255,0.15)",
               position: "relative",
               overflow: "hidden"
             }}>
               <div style={{
                 width: "100%",
                 height: "100%",
-                borderRadius: "12px",
+                borderRadius: "14px",
                 overflow: "hidden",
                 position: "relative"
               }}>
@@ -310,7 +475,8 @@ export default function Hero() {
                     e.target.nextSibling.style.display = 'flex';
                   }}
                 />
-                {/* Fallback if photo not found */}
+                
+                {/* Fallback */}
                 <div style={{
                   display: "none",
                   width: "100%", height: "100%",
@@ -322,29 +488,87 @@ export default function Hero() {
                   textAlign: "center",
                   padding: "2rem"
                 }}>
-                  Please add 'profile.jpg' to the public folder
+                  Muhammad Haikel Saleh
                 </div>
 
-                {/* Cyberpunk Scanline over image */}
+                {/* Cyber Scanline Overlay */}
                 <div style={{
                   position: "absolute", top: 0, left: 0, width: "100%", height: "4px",
-                  background: "rgba(229,9,20,0.5)",
-                  boxShadow: "0 0 10px var(--color-red)",
-                  animation: "scanline 6s linear infinite",
+                  background: "rgba(229,9,20,0.7)",
+                  boxShadow: "0 0 15px var(--color-red)",
+                  animation: "scanline 5s linear infinite",
                   mixBlendMode: "overlay"
                 }} />
+
+                {/* Bottom Frame Badge */}
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: "0.75rem",
+                    left: "0.75rem",
+                    right: "0.75rem",
+                    padding: "0.6rem 0.9rem",
+                    background: "rgba(5, 7, 14, 0.88)",
+                    backdropFilter: "blur(12px)",
+                    WebkitBackdropFilter: "blur(12px)",
+                    borderRadius: "8px",
+                    border: "1px solid rgba(255,255,255,0.12)",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    zIndex: 5,
+                  }}
+                >
+                  <div>
+                    <div
+                      style={{
+                        fontFamily: "var(--font-display)",
+                        fontSize: "0.88rem",
+                        fontWeight: 700,
+                        color: "#fff",
+                      }}
+                    >
+                      SMKN 22 Jakarta
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: "var(--font-mono)",
+                        fontSize: "0.62rem",
+                        color: "var(--color-purple)",
+                        letterSpacing: "0.08em",
+                      }}
+                    >
+                      TKJ • LULUSAN 2026
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      padding: "0.25rem 0.55rem",
+                      background: "rgba(229, 9, 20, 0.2)",
+                      border: "1px solid var(--color-red)",
+                      borderRadius: "4px",
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "0.58rem",
+                      color: "var(--color-white)",
+                      fontWeight: 700,
+                    }}
+                  >
+                    BNSP CERTIFIED
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Decorative Web Behind */}
+          {/* Decorative Web Pattern Behind */}
           <div style={{
             position: "absolute",
             top: "50%", left: "50%",
             transform: "translate(-50%, -50%) scale(1.4)",
             width: "100%", height: "100%",
             zIndex: 1,
-            opacity: 0.15,
+            opacity: 0.18,
             pointerEvents: "none",
             backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0 L100 100 M100 0 L0 100 M50 0 L50 100 M0 50 L100 50' stroke='%23ffffff' stroke-width='0.5'/%3E%3Ccircle cx='50' cy='50' r='20' fill='none' stroke='%23e50914' stroke-width='0.5'/%3E%3Ccircle cx='50' cy='50' r='40' fill='none' stroke='%23ffffff' stroke-width='0.5'/%3E%3C/svg%3E\")",
             backgroundSize: "contain",
@@ -358,21 +582,21 @@ export default function Hero() {
             .hero-grid-container { 
               grid-template-columns: 1fr !important; 
               text-align: center;
-              gap: 2.5rem !important;
-              padding-top: 1rem !important;
+              gap: 3rem !important;
+              padding-top: 1.5rem !important;
             }
             .hero-image-col { 
-              order: -1 !important; /* Make image appear ON TOP in center on mobile */
-              margin: 0 auto !important;
-              max-width: 260px !important;
+              order: -1 !important;
+              margin: 2rem auto 1rem auto !important;
+              max-width: 290px !important;
               width: 100% !important;
             }
-            .hero-hanging-spiderman img {
-              width: 90px !important;
-            }
             .hero-hanging-spiderman {
-              top: -40px !important;
-              right: -20px !important;
+              top: -95px !important;
+              right: -15px !important;
+            }
+            .hero-hanging-spiderman img {
+              width: 120px !important;
             }
             .hero-text-col {
               display: flex;
@@ -381,6 +605,7 @@ export default function Hero() {
             }
             .hero-ctas { 
               justify-content: center !important; 
+              width: 100%;
             }
             #hero p, #hero div { 
               margin-left: auto; 

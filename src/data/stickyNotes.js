@@ -1,0 +1,83 @@
+export const NOTE_CATEGORIES = [
+  { id: "all", label: "All Notes", icon: "Grid" },
+  { id: "feedback", label: "Feedback", icon: "MessageSquare", color: "#3080ff" },
+  { id: "mission", label: "Spidey Mission", icon: "Target", color: "#e50914" },
+  { id: "collab", label: "Tech Collab", icon: "Zap", color: "#ac4bff" },
+  { id: "lore", label: "Multiverse Lore", icon: "Sparkles", color: "#facc15" },
+  { id: "cheer", label: "Appreciation", icon: "Heart", color: "#10b981" },
+];
+
+export const NOTE_COLORS = [
+  {
+    id: "crimson",
+    name: "Classic Spidey Red",
+    bg: "rgba(35, 8, 12, 0.88)",
+    border: "#e50914",
+    glow: "rgba(229, 9, 20, 0.4)",
+    accent: "#ff3b47",
+    tape: "rgba(229, 9, 20, 0.75)",
+    tagBg: "rgba(229, 9, 20, 0.18)",
+    badgeColor: "#ff4d5a",
+  },
+  {
+    id: "electric-yellow",
+    name: "Miles Venom Yellow",
+    bg: "rgba(32, 28, 6, 0.88)",
+    border: "#facc15",
+    glow: "rgba(250, 204, 21, 0.35)",
+    accent: "#fde047",
+    tape: "rgba(250, 204, 21, 0.75)",
+    tagBg: "rgba(250, 204, 21, 0.18)",
+    badgeColor: "#fde047",
+  },
+  {
+    id: "cyan-2099",
+    name: "Cyberpunk 2099 Cyan",
+    bg: "rgba(6, 26, 36, 0.88)",
+    border: "#00f0ff",
+    glow: "rgba(0, 240, 255, 0.35)",
+    accent: "#38bdf8",
+    tape: "rgba(0, 240, 255, 0.75)",
+    tagBg: "rgba(0, 240, 255, 0.18)",
+    badgeColor: "#38bdf8",
+  },
+  {
+    id: "symbiote-purple",
+    name: "Venom Synth Purple",
+    bg: "rgba(26, 8, 36, 0.88)",
+    border: "#ac4bff",
+    glow: "rgba(172, 75, 255, 0.4)",
+    accent: "#c084fc",
+    tape: "rgba(172, 75, 255, 0.75)",
+    tagBg: "rgba(172, 75, 255, 0.18)",
+    badgeColor: "#c084fc",
+  },
+  {
+    id: "gwen-teal",
+    name: "Ghost-Spider Emerald",
+    bg: "rgba(6, 32, 24, 0.88)",
+    border: "#10b981",
+    glow: "rgba(16, 185, 129, 0.35)",
+    accent: "#34d399",
+    tape: "rgba(16, 185, 129, 0.75)",
+    tagBg: "rgba(16, 185, 129, 0.18)",
+    badgeColor: "#34d399",
+  },
+];
+
+export const SPIDEY_ALIASES = [
+  "Peter Parker",
+  "Miles Morales",
+  "Gwen Stacy",
+  "Spider-Man 2099",
+  "Spider-Noir",
+  "Pavitr Prabhakar",
+  "Cyber-Weaver",
+  "Tech-Crawler #2099",
+  "Ned Leeds",
+  "Ghost-Hacker",
+  "Multiverse Sentinel",
+  "Web-Architect",
+];
+
+export const INITIAL_STICKY_NOTES = [];

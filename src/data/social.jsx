@@ -27,42 +27,81 @@ function GithubIcon({ size = 24 }) {
   );
 }
 
+function LinkedinIcon({ size = 24 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+      <rect width="4" height="12" x="2" y="9" />
+      <circle cx="4" cy="4" r="2" />
+    </svg>
+  );
+}
+
 export const socials = [
   {
+    name: "WhatsApp",
+    value: "0895-3209-59499",
+    url: "https://wa.me/62895320959499",
+    icon: Phone,
+    color: "#25D366", // WhatsApp Green
+    badge: "Direct Chat",
+    action: "Chat via WhatsApp"
+  },
+  {
     name: "Email",
+    value: "haikelsaleh21@gmail.com",
     url: "mailto:haikelsaleh21@gmail.com",
     icon: Mail,
-    color: "#3080FF" // Blue
+    color: "#00F0FF", // Electric Cyan
+    badge: "Official Inquiries",
+    action: "Send Email"
+  },
+  {
+    name: "LinkedIn",
+    value: "Muhammad Haikel Saleh",
+    url: "https://www.linkedin.com/in/muhammad-haikel-saleh-9ab823337/",
+    icon: LinkedinIcon,
+    color: "#0A66C2", // LinkedIn Blue
+    badge: "Professional Profile",
+    action: "Connect on LinkedIn"
   },
   {
     name: "GitHub",
+    value: "hekall21",
     url: "https://github.com/hekall21",
     icon: GithubIcon,
-    color: "#ffffff" // White
-  },
-  {
-    name: "WhatsApp",
-    url: "https://wa.me/620895320959499",
-    icon: Phone,
-    color: "#25D366" // Green
+    color: "#FFFFFF", // White
+    badge: "Code Repositories",
+    action: "View Projects"
   },
   {
     name: "Instagram",
+    value: "@hkell_21",
     url: "https://instagram.com/hkell_21",
     icon: InstagramIcon,
-    color: "#E1306C" // Pink/Red
+    color: "#E1306C", // Instagram Pink
+    badge: "Social",
+    action: "Follow"
   },
   {
     name: "TikTok",
+    value: "@hkell21",
     url: "https://tiktok.com/@hkell21",
     icon: TiktokIcon,
-    color: "#AC4BFF" // Purple/White
+    color: "#AC4BFF", // TikTok Purple
+    badge: "Multimedia",
+    action: "Follow"
   }
 ];
 
 export const contactInfo = {
   email: "haikelsaleh21@gmail.com",
-  whatsapp: "0895320959499",
-  location: "Kramat Jati, Jakarta Timur",
-  github: "https://github.com/hekall21"
+  phone: "0895320959499",
+  whatsapp: "+62 895-3209-59499",
+  whatsappRaw: "62895320959499",
+  location: "Kramat Jati, Jakarta Timur, Indonesia",
+  github: "https://github.com/hekall21",
+  linkedin: "https://www.linkedin.com/in/muhammad-haikel-saleh-9ab823337/",
+  responseTime: "< 2 Jam (Fast Response)",
+  availability: "Open for Full-time, Internship & Freelance"
 };

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import SectionHeading from "../common/SectionHeading";
 import { certificates } from "../../data/certificates";
 import { fadeUp, staggerContainer, defaultViewport } from "../../animations/variants";
-import { Award, X } from "lucide-react";
+import { Award, X, ExternalLink, ShieldCheck, Eye } from "lucide-react";
 
 export default function Certificates() {
   const [selectedCert, setSelectedCert] = useState(null);
@@ -25,13 +25,29 @@ export default function Certificates() {
   }, [selectedCert, closeModal]);
 
   return (
-    <section id="certificates" style={{ position: "relative" }}>
+    <section id="certificates" style={{ position: "relative", overflow: "hidden" }}>
       <div className="section">
         <SectionHeading
-          number="04"
-          label="CERTIFICATES"
-          title="CERTIFICATES"
+          number="05"
+          label="CREDENTIALS & LICENSES"
+          title="VERIFIED"
+          titleAccent="CERTIFICATES."
         />
+
+        <p
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.85rem",
+            color: "var(--color-muted)",
+            maxWidth: "680px",
+            marginTop: "-1rem",
+            marginBottom: "3rem",
+            lineHeight: 1.6,
+          }}
+        >
+          Sertifikasi kompetensi resmi BNSP (Badan Nasional Sertifikasi Profesi) dan
+          sertifikat kelulusan Praktik Kerja Lapangan.
+        </p>
 
         {/* Certificate cards */}
         <motion.div
@@ -41,236 +57,243 @@ export default function Certificates() {
           viewport={defaultViewport}
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
             gap: "2rem",
-            marginTop: "3rem",
           }}
         >
           {certificates.map((cert) => (
-            <motion.div
-              key={cert.id}
-              variants={fadeUp}
-            >
-              <button
-                className="neon-card cert-card-btn"
+            <motion.div key={cert.id} variants={fadeUp}>
+              <div
+                className="neon-card"
                 onClick={() => setSelectedCert(cert)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => e.key === "Enter" && setSelectedCert(cert)}
                 aria-label={`View ${cert.title}`}
                 style={{
                   display: "block",
                   width: "100%",
                   textAlign: "left",
                   cursor: "pointer",
-                  padding: "1.5rem",
+                  padding: "1.75rem",
+                  position: "relative",
+                  overflow: "hidden",
                 }}
               >
-                {/* Placeholder image container */}
+                {/* Image Showcase */}
                 <div
                   style={{
                     width: "100%",
-                    height: "220px",
-                    borderRadius: "8px",
-                    border: "1px solid rgba(255,255,255,0.05)",
+                    height: "230px",
+                    borderRadius: "10px",
+                    border: "1px solid rgba(255, 255, 255, 0.08)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    background: "rgba(0,0,0,0.5)",
+                    background: "rgba(0, 0, 0, 0.6)",
                     marginBottom: "1.5rem",
                     overflow: "hidden",
                     position: "relative",
                   }}
                 >
-                  {cert.image ? (
-                    <img
-                      src={cert.image}
-                      alt={cert.title}
-                      loading="lazy"
+                  <img
+                    src={cert.image}
+                    alt={cert.title}
+                    loading="lazy"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      transition: "transform 0.4s ease",
+                    }}
+                    className="cert-img"
+                  />
+
+                  {/* Hover Overlay */}
+                  <div
+                    className="cert-hover-overlay"
+                    style={{
+                      position: "absolute",
+                      inset: 0,
+                      background: "rgba(5, 5, 10, 0.75)",
+                      backdropFilter: "blur(4px)",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "0.5rem",
+                      opacity: 0,
+                      transition: "opacity 0.3s ease",
+                    }}
+                  >
+                    <Eye size={28} color="var(--color-red)" />
+                    <span
                       style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        transition: "transform 0.5s ease",
+                        fontFamily: "var(--font-mono)",
+                        fontSize: "0.75rem",
+                        color: "var(--color-white)",
+                        letterSpacing: "0.1em",
+                        textTransform: "uppercase",
                       }}
-                      className="cert-img"
-                    />
-                  ) : (
+                    >
+                      KLIK UNTUK MEMPERBESAR
+                    </span>
+                  </div>
+                </div>
+
+                {/* Info */}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "flex-start",
+                    gap: "1rem",
+                  }}
+                >
+                  <div>
                     <div
                       style={{
                         display: "flex",
-                        flexDirection: "column",
                         alignItems: "center",
-                        gap: "0.75rem",
+                        gap: "0.4rem",
+                        marginBottom: "0.3rem",
                       }}
                     >
-                      <Award size={36} color="var(--color-purple)" />
+                      <ShieldCheck size={16} color="var(--color-purple)" />
                       <span
                         style={{
                           fontFamily: "var(--font-mono)",
-                          fontSize: "0.65rem",
-                          letterSpacing: "0.2em",
-                          color: "var(--color-muted)",
+                          fontSize: "0.68rem",
+                          color: "var(--color-purple)",
+                          letterSpacing: "0.1em",
+                          textTransform: "uppercase",
                         }}
                       >
-                        CERTIFICATE
+                        OFFICIAL CREDENTIAL
                       </span>
                     </div>
-                  )}
-                  {/* Subtle Red Overlay on hover */}
-                  <div className="cert-overlay" style={{
-                    position: "absolute", inset: 0,
-                    background: "rgba(229,9,20,0.1)",
-                    opacity: 0,
-                    transition: "opacity 0.3s ease"
-                  }} />
+
+                    <h3
+                      style={{
+                        fontFamily: "var(--font-display)",
+                        fontSize: "1.15rem",
+                        fontWeight: 700,
+                        color: "var(--color-white)",
+                        marginBottom: "0.35rem",
+                      }}
+                    >
+                      {cert.title}
+                    </h3>
+                    <p
+                      style={{
+                        fontFamily: "var(--font-mono)",
+                        fontSize: "0.78rem",
+                        color: "var(--color-muted)",
+                      }}
+                    >
+                      {cert.issuer}
+                    </p>
+                  </div>
+
+                  <div
+                    style={{
+                      width: "36px",
+                      height: "36px",
+                      borderRadius: "8px",
+                      background: "rgba(255, 255, 255, 0.05)",
+                      border: "1px solid var(--color-border)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0,
+                    }}
+                  >
+                    <ExternalLink size={16} color="var(--color-text)" />
+                  </div>
                 </div>
-
-                {/* Title */}
-                <h3
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    fontSize: "1.1rem",
-                    fontWeight: 700,
-                    color: "var(--color-white)",
-                    textTransform: "uppercase",
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  {cert.title}
-                </h3>
-
-                {/* Issuer */}
-                <p
-                  style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: "0.75rem",
-                    letterSpacing: "0.1em",
-                    color: "var(--color-muted)",
-                  }}
-                >
-                  {cert.issuer}
-                </p>
-              </button>
+              </div>
             </motion.div>
           ))}
         </motion.div>
       </div>
 
-      {/* Modal */}
+      {/* Lightbox Modal */}
       <AnimatePresence>
         {selectedCert && (
-          <motion.div
-            className="cert-modal-overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            onClick={closeModal}
-            role="dialog"
-            aria-modal="true"
-            aria-label={selectedCert.title}
-          >
+          <div className="cert-modal-overlay" onClick={closeModal}>
             <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
               className="cert-modal"
-              initial={{ scale: 0.95, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
               onClick={(e) => e.stopPropagation()}
             >
               <button
                 className="cert-modal-close"
                 onClick={closeModal}
-                aria-label="Close modal"
+                aria-label="Tutup sertifikat"
               >
-                CLOSE
-                <X size={16} />
+                <X size={16} /> TUTUP (ESC)
               </button>
 
-              {/* Certificate image */}
-              <div
-                style={{
-                  width: "100%",
-                  minHeight: "400px",
-                  borderRadius: "8px",
-                  border: "1px solid rgba(255,255,255,0.05)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  background: "rgba(0,0,0,0.6)",
-                  marginBottom: "2rem",
-                  overflow: "hidden"
-                }}
-              >
-                {selectedCert.image ? (
-                  <img
-                    src={selectedCert.image}
-                    alt={selectedCert.title}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "contain",
-                    }}
-                  />
-                ) : (
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      gap: "1rem",
-                    }}
-                  >
-                    <Award size={48} color="var(--color-purple)" />
-                    <span
-                      style={{
-                        fontFamily: "var(--font-mono)",
-                        fontSize: "0.7rem",
-                        letterSpacing: "0.2em",
-                        color: "var(--color-muted)",
-                      }}
-                    >
-                      PREVIEW UNAVAILABLE
-                    </span>
-                  </div>
-                )}
+              <div style={{ marginTop: "1rem", marginBottom: "1.5rem" }}>
+                <h3
+                  style={{
+                    fontFamily: "var(--font-display)",
+                    fontSize: "1.5rem",
+                    fontWeight: 700,
+                    color: "var(--color-white)",
+                    marginBottom: "0.4rem",
+                  }}
+                >
+                  {selectedCert.title}
+                </h3>
+                <p
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "0.85rem",
+                    color: "var(--color-purple)",
+                  }}
+                >
+                  Diterbitkan oleh: {selectedCert.issuer}
+                </p>
               </div>
 
-              {/* Title */}
-              <h3
+              <div
                 style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: "1.5rem",
-                  fontWeight: 700,
-                  color: "var(--color-white)",
-                  textTransform: "uppercase",
-                  marginBottom: "0.5rem",
+                  maxHeight: "65vh",
+                  overflowY: "auto",
+                  borderRadius: "8px",
+                  border: "1px solid var(--color-border)",
                 }}
               >
-                {selectedCert.title}
-              </h3>
-
-              <p
-                style={{
-                  fontFamily: "var(--font-mono)",
-                  fontSize: "0.85rem",
-                  color: "var(--color-purple)",
-                  letterSpacing: "0.1em",
-                }}
-              >
-                {selectedCert.issuer}
-              </p>
+                <img
+                  src={selectedCert.image}
+                  alt={selectedCert.title}
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    display: "block",
+                    borderRadius: "8px",
+                  }}
+                />
+              </div>
             </motion.div>
-          </motion.div>
+          </div>
         )}
       </AnimatePresence>
 
-      <style>{`
-        .cert-card-btn:hover .cert-img {
-          transform: scale(1.05);
-        }
-        .cert-card-btn:hover .cert-overlay {
+      <style dangerouslySetInnerHTML={{__html: `
+        .neon-card:hover .cert-hover-overlay {
           opacity: 1 !important;
         }
-      `}</style>
+        .neon-card:hover .cert-img {
+          transform: scale(1.04);
+        }
+      `}} />
+
+      <div className="glow-divider" />
     </section>
   );
 }
