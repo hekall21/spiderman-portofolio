@@ -8,9 +8,9 @@
 
 import { INITIAL_STICKY_NOTES } from "../data/stickyNotes";
 
-// URL Google Apps Script Web App (diambil dari environment variable atau fallback)
+// URL Google Apps Script Web App (diambil dari environment variable atau fallback aktif)
 const GOOGLE_APPSCRIPT_URL =
-  import.meta.env.VITE_APPSCRIPT_URL || "";
+  import.meta.env.VITE_APPSCRIPT_URL || "https://script.google.com/macros/s/AKfycbwPIWN5zgvwiiEz2PMK6rHSVWMk5pqtcrb3ZCDR7_eNHNBX457ZTMaY5nFFPXBBzcMhWg/exec";
 
 // Storage key untuk fallback lokal
 const STORAGE_KEY = "spiderman_portfolio_user_notes_v5";
