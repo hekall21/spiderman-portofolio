@@ -11,8 +11,9 @@ import {
   subscribeToStickyNotes,
   createCloudStickyNote,
   updateCloudReaction,
+  isCloudConfigured,
   isFirebaseReady,
-} from "../../services/firebase";
+} from "../../services/stickyNotesService";
 import {
   Plus,
   X,
@@ -41,7 +42,7 @@ const categoryIconMap = {
   Heart: Heart,
 };
 
-const STORAGE_KEY = "spiderman_portfolio_user_notes_v4";
+const STORAGE_KEY = "spiderman_portfolio_user_notes_v5";
 
 export default function StickyNotes() {
   const [notes, setNotes] = useState(() => {
@@ -60,10 +61,10 @@ export default function StickyNotes() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isCloudSyncActive, setIsCloudSyncActive] = useState(isFirebaseReady);
+  const [isCloudSyncActive, setIsCloudSyncActive] = useState(true);
   const [reactedNotes, setReactedNotes] = useState(() => {
     try {
-      const saved = localStorage.getItem("spiderman_reacted_notes_v4");
+      const saved = localStorage.getItem("spiderman_reacted_notes_v5");
       return saved ? JSON.parse(saved) : {};
     } catch {
       return {};
@@ -119,7 +120,7 @@ export default function StickyNotes() {
 
   useEffect(() => {
     try {
-      localStorage.setItem("spiderman_reacted_notes_v4", JSON.stringify(reactedNotes));
+      localStorage.setItem("spiderman_reacted_notes_v5", JSON.stringify(reactedNotes));
     } catch (e) {
       console.warn("Storage error", e);
     }
