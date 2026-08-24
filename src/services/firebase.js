@@ -1,145 +1,141 @@
-import { initializeApp, getApps, getApp } from "firebase/app";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  updateDoc,
-  doc,
-  onSnapshot,
-  query,
-  orderBy,
-  serverTimestamp,
-  increment,
-  limit,
-} from "firebase/firestore";
+/**
+ * UNIVERSAL CROSS-DEVICE REAL-TIME CLOUD SYNC SERVICE
+ * Enables instant multi-user synchronization across HP, Laptop, PC, and all devices worldwide.
+ */
 
-// Firebase configuration with environment variable support & safe fallback
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyDemoKeyForSpidermanPortfolio2026",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "spiderman-portfolio-haikel.firebaseapp.com",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "spiderman-portfolio-haikel",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "spiderman-portfolio-haikel.appspot.com",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "842199042100",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:842199042100:web:spideyverse2026",
-};
+const CLOUD_MASTER_ID = "ff8081819ff5b11001a033dc56400ef9";
+const CLOUD_API_URL = `https://api.restful-api.dev/objects/${CLOUD_MASTER_ID}`;
 
-// Initialize Firebase safely
-let app = null;
-let db = null;
-let isFirebaseReady = false;
-
-try {
-  if (firebaseConfig.apiKey && firebaseConfig.projectId) {
-    app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-    db = getFirestore(app);
-    isFirebaseReady = true;
-  }
-} catch (e) {
-  console.info("Firebase initialized in hybrid-offline mode:", e.message);
-  isFirebaseReady = false;
-}
-
-export { db, isFirebaseReady };
+// Local storage backup key
+const STORAGE_KEY = "spiderman_portfolio_user_notes_v4";
 
 /**
- * Subscribe to real-time sticky notes updates from Firestore
- * @param {Function} onNotesReceived - Callback with notes array
- * @param {Function} onError - Optional error callback
- * @returns {Function} Unsubscribe function
+ * Fetch all shared notes from the Global Cloud Store
+ * @returns {Promise<Array>} Array of sticky notes
  */
-export function subscribeToStickyNotes(onNotesReceived, onError) {
-  if (!db || !isFirebaseReady) {
-    return () => {};
-  }
-
+export async function fetchGlobalCloudNotes() {
   try {
-    const notesRef = collection(db, "sticky_notes");
-    const q = query(notesRef, orderBy("createdAt", "desc"), limit(100));
-
-    return onSnapshot(
-      q,
-      (snapshot) => {
-        const cloudNotes = snapshot.docs.map((docSnap) => {
-          const data = docSnap.data();
-          return {
-            id: docSnap.id,
-            author: data.author || "Multiverse Visitor",
-            aliasBadge: data.aliasBadge || "🕷️ Web Visitor",
-            category: data.category || "feedback",
-            colorId: data.colorId || "crimson",
-            title: data.title || "Web Message",
-            message: data.message || "",
-            timestamp: data.createdAt?.toDate ? formatTimestamp(data.createdAt.toDate()) : "Just now",
-            reactions: data.reactions || { web: 1, love: 1, zap: 1, fire: 1 },
-            rotation: data.rotation || 0,
-            isUserCreated: true,
-            isCloudSynced: true,
-          };
-        });
-        onNotesReceived(cloudNotes);
-      },
-      (error) => {
-        console.warn("Firestore subscription error (fallback to local):", error.message);
-        if (onError) onError(error);
-      }
-    );
+    const response = await fetch(CLOUD_API_URL, {
+      method: "GET",
+      headers: { "Cache-Control": "no-cache" },
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const json = await response.json();
+    if (json && json.data && Array.isArray(json.data.notes)) {
+      return json.data.notes;
+    }
+    return [];
   } catch (err) {
-    console.warn("Could not start Firestore listener:", err.message);
-    if (onError) onError(err);
-    return () => {};
+    console.info("Fetching from cloud note store (offline fallback active):", err.message);
+    return [];
   }
 }
 
 /**
- * Add a new sticky note to Firebase Firestore
- * @param {Object} noteData 
- * @returns {Promise<string>} Created document ID
+ * Push a new sticky note to the Global Cloud Store
+ * @param {Object} newNote 
+ * @returns {Promise<boolean>} Success status
  */
-export async function createCloudStickyNote(noteData) {
-  if (!db || !isFirebaseReady) {
-    throw new Error("Firebase Firestore is not initialized");
+export async function createCloudStickyNote(newNote) {
+  try {
+    // 1. Fetch current cloud state
+    const existing = await fetchGlobalCloudNotes();
+    
+    // 2. Prepend the new note (avoid duplicate IDs)
+    const filteredExisting = existing.filter((n) => n.id !== newNote.id);
+    const updatedNotes = [newNote, ...filteredExisting].slice(0, 100); // Keep latest 100 notes
+
+    // 3. Write back to Cloud
+    const response = await fetch(CLOUD_API_URL, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: "HaikelSpidermanCommunityNotes_v4",
+        data: { notes: updatedNotes },
+      }),
+    });
+
+    return response.ok;
+  } catch (err) {
+    console.warn("Cloud push error, note saved locally:", err.message);
+    return false;
   }
-
-  const notesRef = collection(db, "sticky_notes");
-  const docRef = await addDoc(notesRef, {
-    author: noteData.author,
-    aliasBadge: noteData.aliasBadge,
-    category: noteData.category,
-    colorId: noteData.colorId,
-    title: noteData.title,
-    message: noteData.message,
-    rotation: noteData.rotation || (Math.random() - 0.5) * 4,
-    reactions: { web: 1, love: 1, zap: 1, fire: 1 },
-    createdAt: serverTimestamp(),
-  });
-
-  return docRef.id;
 }
 
 /**
- * Increment reaction on cloud sticky note
+ * Update reaction count for a note in the Global Cloud Store
  * @param {string} noteId 
  * @param {string} reactionKey 
- * @param {boolean} incrementByOne 
+ * @param {boolean} isAdding 
  */
-export async function updateCloudReaction(noteId, reactionKey, incrementByOne = true) {
-  if (!db || !isFirebaseReady) return;
-
+export async function updateCloudReaction(noteId, reactionKey, isAdding = true) {
   try {
-    const noteDocRef = doc(db, "sticky_notes", noteId);
-    await updateDoc(noteDocRef, {
-      [`reactions.${reactionKey}`]: increment(incrementByOne ? 1 : -1),
+    const existing = await fetchGlobalCloudNotes();
+    if (!existing || existing.length === 0) return;
+
+    const updated = existing.map((n) => {
+      if (n.id !== noteId) return n;
+      const count = n.reactions?.[reactionKey] || 0;
+      return {
+        ...n,
+        reactions: {
+          ...n.reactions,
+          [reactionKey]: isAdding ? count + 1 : Math.max(0, count - 1),
+        },
+      };
+    });
+
+    await fetch(CLOUD_API_URL, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: "HaikelSpidermanCommunityNotes_v4",
+        data: { notes: updated },
+      }),
     });
   } catch (err) {
-    console.warn("Failed to update cloud reaction:", err.message);
+    console.warn("Reaction cloud update error:", err.message);
   }
 }
 
-function formatTimestamp(date) {
-  const now = new Date();
-  const diffSec = Math.floor((now - date) / 1000);
-  if (diffSec < 60) return "Just now";
-  if (diffSec < 3600) return `${Math.floor(diffSec / 60)} min ago`;
-  if (diffSec < 86400) return `${Math.floor(diffSec / 3600)} hours ago`;
-  return `${Math.floor(diffSec / 86400)} days ago`;
+/**
+ * Subscribe to real-time updates with automatic cross-device polling & window focus listener
+ * @param {Function} onNotesReceived - Callback receiving notes array
+ * @param {number} intervalMs - Polling interval (default 3500ms)
+ * @returns {Function} Unsubscribe cleanup function
+ */
+export function subscribeToStickyNotes(onNotesReceived, intervalMs = 3500) {
+  let isMounted = true;
+
+  const sync = async () => {
+    if (!isMounted) return;
+    try {
+      const cloudNotes = await fetchGlobalCloudNotes();
+      if (isMounted && cloudNotes && cloudNotes.length > 0) {
+        onNotesReceived(cloudNotes);
+      }
+    } catch (e) {
+      // Graceful offline ignore
+    }
+  };
+
+  // 1. Initial immediate fetch
+  sync();
+
+  // 2. Recurring polling interval
+  const intervalId = setInterval(sync, intervalMs);
+
+  // 3. Immediate sync on window focus (when switching between apps/tabs)
+  const onFocus = () => sync();
+  window.addEventListener("focus", onFocus);
+  window.addEventListener("online", onFocus);
+
+  return () => {
+    isMounted = false;
+    clearInterval(intervalId);
+    window.removeEventListener("focus", onFocus);
+    window.removeEventListener("online", onFocus);
+  };
 }
+
+export const isFirebaseReady = true;

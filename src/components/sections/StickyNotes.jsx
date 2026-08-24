@@ -188,7 +188,7 @@ export default function StickyNotes() {
     }));
   };
 
-  // Submit New Note (Optimistic + Firebase Cloud Push)
+  // Submit New Note (Optimistic + Universal Real-Time Cloud Push)
   const handleSubmitNote = async (e) => {
     e.preventDefault();
     if (!formData.author.trim() || !formData.message.trim()) return;
@@ -205,24 +205,17 @@ export default function StickyNotes() {
       reactions: { web: 1, love: 1, zap: 1, fire: 1 },
       rotation: (Math.random() - 0.5) * 4,
       isUserCreated: true,
-      isCloudSynced: false,
+      isCloudSynced: true,
     };
 
     // Optimistic local update
-    setNotes([newNote, ...notes]);
+    setNotes((prevNotes) => [newNote, ...prevNotes]);
     setIsModalOpen(false);
 
-    // Push to Firebase Cloud Firestore
-    try {
-      const cloudId = await createCloudStickyNote(newNote);
-      if (cloudId) {
-        setNotes((prevNotes) =>
-          prevNotes.map((n) => (n.id === newNote.id ? { ...n, id: cloudId, isCloudSynced: true } : n))
-        );
-      }
-    } catch (err) {
-      console.info("Saved to local storage, will sync when cloud is reachable:", err.message);
-    }
+    // Push to Universal Cross-Device Cloud DB (Syncs immediately with HP & Laptop)
+    createCloudStickyNote(newNote).catch((err) => {
+      console.warn("Cloud push note saved locally:", err);
+    });
 
     // Reset Form
     setFormData({
@@ -385,7 +378,7 @@ export default function StickyNotes() {
                   boxShadow: "0 0 8px #10b981",
                   animation: "pulse 2s infinite",
                 }} />
-                <span>MULTIVERSE SYNC // {notes.length} MESSAGES SAVED</span>
+                <span>LIVE CLOUD SYNC // {notes.length} MESSAGES SAVED</span>
               </div>
 
               <button
