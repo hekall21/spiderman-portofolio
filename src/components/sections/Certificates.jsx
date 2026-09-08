@@ -28,7 +28,7 @@ export default function Certificates() {
     <section id="certificates" style={{ position: "relative", overflow: "hidden" }}>
       <div className="section">
         <SectionHeading
-          number="05"
+          number="06"
           label="CREDENTIALS & LICENSES"
           title="VERIFIED"
           titleAccent="CERTIFICATES."

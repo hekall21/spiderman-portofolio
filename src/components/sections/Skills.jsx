@@ -43,7 +43,7 @@ export default function Skills() {
     <section id="skills" style={{ position: "relative", overflow: "hidden" }}>
       <div className="section">
         <SectionHeading
-          number="02"
+          number="03"
           label="ARSENAL & ABILITIES"
           title="TECHNICAL"
           titleAccent="SKILLS."

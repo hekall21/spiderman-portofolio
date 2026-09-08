@@ -655,3 +655,29 @@ button:hover .btn-slide-wrap .label-bot,
 a:hover .btn-slide-wrap .label-bot {
   transform: translateY(0%);
 }
+
+/* ══════════════════════════════════════════════
+   PROJECTS & 3D HARDWARE ACCELERATION
+   ══════════════════════════════════════════════ */
+.project-card {
+  transform: translateZ(0);
+  will-change: transform, border-color;
+  backface-visibility: hidden;
+}
+
+canvas {
+  transform: translateZ(0);
+  touch-action: none;
+}
+
+@media (max-width: 768px) {
+  .hero-ctas {
+    flex-direction: column;
+    width: 100%;
+  }
+  .hero-ctas a, .hero-ctas button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+

@@ -54,7 +54,7 @@ export default function Experience() {
     <section id="experience" style={{ position: "relative", overflow: "hidden" }}>
       <div className="section">
         <SectionHeading
-          number="03"
+          number="04"
           label="FIELD OPERATIONS"
           title="WORK"
           titleAccent="EXPERIENCE."

@@ -14,7 +14,7 @@ export default function Education() {
     <section id="education" style={{ position: "relative", overflow: "hidden" }}>
       <div className="section">
         <SectionHeading
-          number="04"
+          number="05"
           label="ACADEMIC MILESTONES"
           title="WHERE IT ALL"
           titleAccent="STARTED."

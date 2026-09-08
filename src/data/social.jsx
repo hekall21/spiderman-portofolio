@@ -40,8 +40,8 @@ function LinkedinIcon({ size = 24 }) {
 export const socials = [
   {
     name: "WhatsApp",
-    value: "0895-3209-59499",
-    url: "https://wa.me/62895320959499",
+    value: "0895-0288-6272",
+    url: "https://wa.me/6289502886272",
     icon: Phone,
     color: "#25D366", // WhatsApp Green
     badge: "Direct Chat",
@@ -76,8 +76,8 @@ export const socials = [
   },
   {
     name: "Instagram",
-    value: "@hkell_21",
-    url: "https://instagram.com/hkell_21",
+    value: "@haekalve",
+    url: "https://instagram.com/haekalve",
     icon: InstagramIcon,
     color: "#E1306C", // Instagram Pink
     badge: "Social",
@@ -85,8 +85,8 @@ export const socials = [
   },
   {
     name: "TikTok",
-    value: "@hkell21",
-    url: "https://tiktok.com/@hkell21",
+    value: "@haekalve",
+    url: "https://tiktok.com/@haekalve",
     icon: TiktokIcon,
     color: "#AC4BFF", // TikTok Purple
     badge: "Multimedia",
@@ -96,9 +96,9 @@ export const socials = [
 
 export const contactInfo = {
   email: "haikelsaleh21@gmail.com",
-  phone: "0895320959499",
-  whatsapp: "+62 895-3209-59499",
-  whatsappRaw: "62895320959499",
+  phone: "089502886272",
+  whatsapp: "+62 895-0288-6272",
+  whatsappRaw: "6289502886272",
   location: "Kramat Jati, Jakarta Timur, Indonesia",
   github: "https://github.com/hekall21",
   linkedin: "https://www.linkedin.com/in/muhammad-haikel-saleh-9ab823337/",

@@ -5,6 +5,7 @@ import {
   Mail,
   Award,
   User,
+  Code2,
   Cpu,
   Briefcase,
   GraduationCap,
@@ -37,6 +38,7 @@ export default function QuickDock() {
 
   const dockItems = [
     { id: "about", icon: User, label: "About" },
+    { id: "projects", icon: Code2, label: "Projects" },
     { id: "skills", icon: Cpu, label: "Skills" },
     { id: "experience", icon: Briefcase, label: "Experience" },
     { id: "education", icon: GraduationCap, label: "Education" },

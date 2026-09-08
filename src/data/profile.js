@@ -16,16 +16,16 @@ export const profile = {
     "Saya merupakan pribadi yang disiplin, bertanggung jawab, mudah beradaptasi, dan selalu ingin mempelajari hal baru.",
   roles: [
     "Junior Web Developer",
+    "3D WebGL Developer",
+    "Creative Frontend Developer",
     "Backend Developer",
-    "IT Support",
-    "Network Administrator",
-    "Administrative Support",
+    "IT Support & Network",
   ],
   stats: [
+    { value: 12, label: "Web & 3D Projects" },
     { value: 5, label: "Skill Categories" },
     { value: 2, label: "Certificates" },
     { value: 1, label: "PKL Experience" },
-    { value: 3, label: "Organizations" },
   ],
   languages: [
     { name: "Bahasa Indonesia", level: "Native" },

@@ -270,7 +270,7 @@ export default function StickyNotes() {
       <div className="section">
         {/* Section Heading */}
         <SectionHeading
-          number="06"
+          number="07"
           label="SPIDER-BOARD"
           title="COMMUNITY"
           titleAccent="WEB NOTES."

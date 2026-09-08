@@ -175,7 +175,7 @@ export default function Contact() {
       <div className="section" style={{ position: "relative", zIndex: 10 }}>
         {/* Section Header */}
         <SectionHeading
-          number="07"
+          number="08"
           label="COMMUNICATION PROTOCOL"
           title="TRANSMISSION &"
           titleAccent="DISPATCH HUB."

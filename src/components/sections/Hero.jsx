@@ -403,11 +403,11 @@ export default function Hero() {
             }}
           >
             <a
-              href="#skills"
+              href="#projects"
               className="btn-primary with-crosshairs"
               onClick={(e) => {
                 e.preventDefault();
-                document.getElementById("skills")?.scrollIntoView({ behavior: "smooth" });
+                document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" });
               }}
               style={{
                 display: "inline-flex",
@@ -422,10 +422,33 @@ export default function Hero() {
               }}
             >
               <div className="btn-slide-wrap">
+                <span className="label-top">VIEW WEB PROJECTS</span>
+                <span className="label-bot">VIEW WEB PROJECTS</span>
+              </div>
+              <ArrowUpRight size={15} />
+            </a>
+
+            <a
+              href="#skills"
+              className="btn-secondary"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById("skills")?.scrollIntoView({ behavior: "smooth" });
+              }}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.55rem",
+                padding: "0.85rem 1.4rem",
+                borderRadius: "4px",
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.75rem",
+              }}
+            >
+              <div className="btn-slide-wrap">
                 <span className="label-top">EXPLORE ARSENAL</span>
                 <span className="label-bot">EXPLORE ARSENAL</span>
               </div>
-              <ArrowUpRight size={15} />
             </a>
 
             <a
