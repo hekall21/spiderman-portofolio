@@ -8,6 +8,54 @@ export const projectCategories = [
 
 export const projects = [
   {
+    id: "kinetic-matrix",
+    title: "Kinetic Topological Matrix",
+    subtitle: "Spring-Mass Lattice Physics & Synaptic Pulses",
+    category: "3d",
+    earthBadge: "🕷️ Earth-928 // Cyber Grid",
+    accentColor: "#00f0ff",
+    modelType: "wave",
+    interactiveComponent: "kinetic-matrix",
+    description:
+      "Simulasi matriks topologi interaktif berbasis Canvas 2D dan hukum pegas Hooke (Spring-Mass). Menampilkan propagasi gelombang kejut gravitasi saat klik, transfer data sinaptik dinamis, dan sinkronisasi mode gelap/terang.",
+    keyFeatures: [
+      "Simulasi Fisika Hooke's Spring-Mass Lattice Real-Time",
+      "Propagasi Gravitational Shockwave Interaktif",
+      "Autonomous Synaptic Data Pulse Traveling Engine",
+      "Dynamic Dark & Light Mode Color Scheme Sync"
+    ],
+    techStack: ["React 19", "TypeScript", "HTML5 Canvas", "Hooke's Law Physics", "Tailwind CSS"],
+    demoUrl: "https://spiderman-portofolio.vercel.app/#projects",
+    githubUrl: "https://github.com/hekall21/spiderman-portofolio",
+    is3D: true,
+    isFeatured: true,
+    stats: { stars: "Topological", status: "Interactive Lab" }
+  },
+  {
+    id: "scroll-locked-video-hero",
+    title: "Scroll-Locked Video Hero",
+    subtitle: "Momentum Physics, Crossfade Looping Video & 3D Tilt",
+    category: "creative",
+    earthBadge: "🕷️ Earth-1610 // Metro Runner",
+    accentColor: "#f3724c",
+    modelType: "laptop",
+    interactiveComponent: "scroll-hero",
+    description:
+      "Komponen runner music hero dengan floating 3D screen yang miring mengikuti kursor, momentum physics coverflow tracklist, looping video tanpa jeda dengan crossfading, dan audio click sintetis Web Audio API.",
+    keyFeatures: [
+      "Seamless Crossfading Double-Video Loop (Anti-Stutter)",
+      "Synthesized Double-Transient Mouse-Wheel Click SFX",
+      "Flick-and-Settle Inertia Tracklist Physics",
+      "Wide-Angle 3D Screen Dynamic Perspective Tilt"
+    ],
+    techStack: ["React 19", "TypeScript", "Tailwind CSS", "Web Audio API", "HTML5 Video"],
+    demoUrl: "https://spiderman-portofolio.vercel.app/#projects",
+    githubUrl: "https://github.com/hekall21/spiderman-portofolio",
+    is3D: true,
+    isFeatured: true,
+    stats: { stars: "Audio-Video", status: "Interactive Lab" }
+  },
+  {
     id: "spatial-noir-gallery",
     title: "Spatial Noir Photo & Video Gallery",
     subtitle: "Cinematic 2.5D Spasial Bebas & 1-Click Download Engine",

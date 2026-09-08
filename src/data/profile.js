@@ -22,7 +22,7 @@ export const profile = {
     "IT Support & Network",
   ],
   stats: [
-    { value: 12, label: "Web & 3D Projects" },
+    { value: 14, label: "Web & 3D Projects" },
     { value: 5, label: "Skill Categories" },
     { value: 2, label: "Certificates" },
     { value: 1, label: "PKL Experience" },

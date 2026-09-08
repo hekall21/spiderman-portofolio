@@ -2,6 +2,8 @@ import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SectionHeading from "../common/SectionHeading";
 import SpiderHolo3D from "../common/SpiderHolo3D";
+import KineticMatrix from "@/components/ui/kinetic-matrix";
+import MusicHero from "@/components/ui/scroll-locked-video-hero";
 import { projects, projectCategories } from "../../data/projects";
 import { fadeUp, staggerContainer, defaultViewport } from "../../animations/variants";
 import {
@@ -13,7 +15,9 @@ import {
   Radio,
   ChevronRight,
   Code2,
-  Maximize2
+  Maximize2,
+  X,
+  Play
 } from "lucide-react";
 
 function GithubIcon({ size = 16 }) {
@@ -28,6 +32,7 @@ function GithubIcon({ size = 16 }) {
 export default function Projects() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedFeaturedProject, setSelectedFeaturedProject] = useState(projects[0]);
+  const [activeLabModal, setActiveLabModal] = useState(null);
 
   // Filtered projects
   const filteredProjects = useMemo(() => {
@@ -167,7 +172,7 @@ export default function Projects() {
                       gap: "0.3rem",
                     }}
                   >
-                    <Sparkles size={12} /> 3D WebGL Accelerated
+                    <Sparkles size={12} /> 3D Accelerated
                   </span>
                 )}
               </div>
@@ -266,6 +271,31 @@ export default function Projects() {
 
               {/* CTAs */}
               <div style={{ display: "flex", gap: "0.85rem", flexWrap: "wrap" }}>
+                {selectedFeaturedProject.interactiveComponent && (
+                  <button
+                    onClick={() => setActiveLabModal(selectedFeaturedProject.interactiveComponent)}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "0.55rem",
+                      padding: "0.8rem 1.4rem",
+                      borderRadius: "8px",
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "0.78rem",
+                      letterSpacing: "0.08em",
+                      background: "linear-gradient(135deg, #00f0ff, #ac4bff)",
+                      color: "#050510",
+                      fontWeight: 800,
+                      cursor: "pointer",
+                      border: "none",
+                      boxShadow: "0 0 25px rgba(0, 240, 255, 0.4)",
+                    }}
+                  >
+                    <Sparkles size={15} />
+                    <span>LAUNCH LIVE LAB</span>
+                  </button>
+                )}
+
                 <a
                   href={selectedFeaturedProject.demoUrl}
                   target="_blank"
@@ -330,7 +360,7 @@ export default function Projects() {
                 <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "var(--color-muted)", marginRight: "0.25rem" }}>
                   INSPECT 3D MODEL:
                 </span>
-                {projects.slice(0, 5).map((p) => {
+                {projects.slice(0, 6).map((p) => {
                   const isSelected = selectedFeaturedProject.id === p.id;
                   return (
                     <button
@@ -463,18 +493,23 @@ export default function Projects() {
                       {project.earthBadge}
                     </span>
 
-                    {project.is3D && (
+                    {project.interactiveComponent && (
                       <span
                         style={{
                           fontFamily: "var(--font-mono)",
                           fontSize: "0.65rem",
                           color: "#00f0ff",
+                          background: "rgba(0, 240, 255, 0.1)",
+                          padding: "0.2rem 0.5rem",
+                          borderRadius: "4px",
+                          border: "1px solid rgba(0, 240, 255, 0.25)",
                           display: "flex",
                           alignItems: "center",
                           gap: "0.25rem",
+                          fontWeight: 700,
                         }}
                       >
-                        <Radio size={11} className="animate-spin" style={{ animationDuration: "6s" }} /> 3D WEBGL
+                        <Sparkles size={11} /> LAB COMPONENT
                       </span>
                     )}
                   </div>
@@ -546,30 +581,57 @@ export default function Projects() {
                     paddingTop: "0.85rem",
                     borderTop: "1px solid rgba(255, 255, 255, 0.06)",
                     marginTop: "auto",
+                    gap: "0.5rem",
+                    flexWrap: "wrap",
                   }}
                 >
-                  <button
-                    onClick={() => {
-                      setSelectedFeaturedProject(project);
-                      const el = document.getElementById("projects");
-                      if (el) el.scrollIntoView({ behavior: "smooth" });
-                    }}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.35rem",
-                      fontFamily: "var(--font-mono)",
-                      fontSize: "0.72rem",
-                      color: "var(--color-muted)",
-                      cursor: "pointer",
-                      transition: "color 0.2s",
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.color = project.accentColor)}
-                    onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-muted)")}
-                  >
-                    <Maximize2 size={13} />
-                    <span>3D Inspect</span>
-                  </button>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+                    {project.interactiveComponent ? (
+                      <button
+                        onClick={() => setActiveLabModal(project.interactiveComponent)}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "0.35rem",
+                          fontFamily: "var(--font-mono)",
+                          fontSize: "0.72rem",
+                          color: "#00f0ff",
+                          background: "rgba(0, 240, 255, 0.12)",
+                          border: "1px solid rgba(0, 240, 255, 0.3)",
+                          padding: "0.35rem 0.65rem",
+                          borderRadius: "6px",
+                          cursor: "pointer",
+                          fontWeight: 700,
+                        }}
+                      >
+                        <Play size={12} fill="#00f0ff" />
+                        <span>Live Lab</span>
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          setSelectedFeaturedProject(project);
+                          const el = document.getElementById("projects");
+                          if (el) el.scrollIntoView({ behavior: "smooth" });
+                        }}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "0.35rem",
+                          fontFamily: "var(--font-mono)",
+                          fontSize: "0.72rem",
+                          color: "var(--color-muted)",
+                          cursor: "pointer",
+                          transition: "color 0.2s",
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.color = project.accentColor)}
+                        onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-muted)")}
+                      >
+                        <Maximize2 size={13} />
+                        <span>3D Inspect</span>
+                      </button>
+                    )}
+                  </div>
 
                   <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
                     <a
@@ -639,6 +701,96 @@ export default function Projects() {
           </AnimatePresence>
         </motion.div>
       </div>
+
+      {/* 4. FULLSCREEN INTERACTIVE COMPONENT LAB MODAL */}
+      <AnimatePresence>
+        {activeLabModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{
+              position: "fixed",
+              inset: 0,
+              zIndex: 99999,
+              background: "rgba(3, 5, 10, 0.94)",
+              backdropFilter: "blur(25px)",
+              WebkitBackdropFilter: "blur(25px)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "clamp(10px, 2vw, 24px)",
+            }}
+          >
+            {/* Modal Top Control Bar */}
+            <div
+              style={{
+                width: "100%",
+                maxWidth: "1100px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: "12px",
+                padding: "0 8px",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+                <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#00f0ff", boxShadow: "0 0 10px #00f0ff" }} />
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.8rem", color: "#fff", fontWeight: 700 }}>
+                  {activeLabModal === "kinetic-matrix" ? "KINETIC TOPOLOGICAL MATRIX LAB" : "SCROLL-LOCKED VIDEO HERO LAB"}
+                </span>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "var(--color-muted)", background: "rgba(255,255,255,0.06)", padding: "0.15rem 0.5rem", borderRadius: "4px" }}>
+                  INTERACTIVE PREVIEW
+                </span>
+              </div>
+
+              <button
+                onClick={() => setActiveLabModal(null)}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.4rem",
+                  background: "rgba(229, 9, 20, 0.2)",
+                  border: "1px solid var(--color-red)",
+                  color: "#ffffff",
+                  padding: "0.4rem 0.85rem",
+                  borderRadius: "8px",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.75rem",
+                  cursor: "pointer",
+                }}
+              >
+                <span>TUTUP LAB</span>
+                <X size={15} />
+              </button>
+            </div>
+
+            {/* Component Container */}
+            <div
+              style={{
+                position: "relative",
+                width: "100%",
+                maxWidth: "1100px",
+                height: "calc(100vh - 120px)",
+                borderRadius: "20px",
+                overflow: "hidden",
+                border: "1px solid rgba(0, 240, 255, 0.35)",
+                boxShadow: "0 25px 60px rgba(0,0,0,0.9), 0 0 35px rgba(0, 240, 255, 0.15)",
+                background: "#000",
+              }}
+            >
+              {activeLabModal === "kinetic-matrix" && (
+                <KineticMatrix title="TOPOLOGY" className="h-full w-full" />
+              )}
+
+              {activeLabModal === "scroll-hero" && (
+                <MusicHero fullBleed={false} style={{ height: "100%", width: "100%" }} />
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Global Responsive Styles */}
       <style
