@@ -536,12 +536,16 @@ img { max-width: 100%; display: block; }
 }
 
 @media (max-width: 768px) {
-  .noise-overlay, .scanlines, .cad-laser-cursor-container {
+  /* Eliminate heavy compositor overlays on mobile; LiveVideoBackground handles ambient dark contrast */
+  .noise-overlay, .scanlines, .cad-laser-cursor-container, .vignette, body::before {
     display: none !important;
   }
   
-  .vignette {
-    opacity: 0.3 !important;
+  .spidey-live-video-layer {
+    contain: strict !important;
+    isolation: isolate !important;
+    transform: translate3d(0, 0, 0) !important;
+    -webkit-transform: translate3d(0, 0, 0) !important;
   }
 
   .hero-grid-container {

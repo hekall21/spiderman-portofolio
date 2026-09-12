@@ -98,25 +98,41 @@ export default function LiveVideoBackground({
     };
   }, []);
 
-  const [isMobile, setIsMobile] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return window.innerWidth < 768 || window.matchMedia("(pointer: coarse)").matches;
-  });
 
-  // Sync play/pause with videoRef
+  // Sync play/pause with videoRef with mobile autoplay unlock
   useEffect(() => {
-    if (!videoRef.current || isMobile) return;
-    if (isPlaying) {
+    if (!videoRef.current) return;
+    videoRef.current.muted = true;
+    videoRef.current.defaultMuted = true;
+
+    const playVideo = () => {
+      if (!videoRef.current) return;
       const playPromise = videoRef.current.play();
       if (playPromise !== undefined) {
         playPromise.catch(() => {
-          // Autoplay was prevented
+          // Autoplay blocked by mobile browser (e.g. low power mode)
+          // Attach lightweight one-time listener to start playback on first touch/tap
+          const unlockPlay = () => {
+            if (videoRef.current && isPlaying) {
+              videoRef.current.play().catch(() => {});
+            }
+            window.removeEventListener("touchstart", unlockPlay);
+            window.removeEventListener("touchend", unlockPlay);
+            window.removeEventListener("click", unlockPlay);
+          };
+          window.addEventListener("touchstart", unlockPlay, { once: true, passive: true });
+          window.addEventListener("touchend", unlockPlay, { once: true, passive: true });
+          window.addEventListener("click", unlockPlay, { once: true, passive: true });
         });
       }
+    };
+
+    if (isPlaying) {
+      playVideo();
     } else {
       videoRef.current.pause();
     }
-  }, [isPlaying, activeVideoIndex, isMobile]);
+  }, [isPlaying, activeVideoIndex]);
 
   return (
     <div
@@ -129,50 +145,44 @@ export default function LiveVideoBackground({
         overflow: "hidden",
         pointerEvents: "none",
         zIndex: 0,
+        contain: "strict",
+        isolation: "isolate",
+        transform: "translate3d(0, 0, 0)",
+        WebkitTransform: "translate3d(0, 0, 0)",
+        backfaceVisibility: "hidden",
+        WebkitBackfaceVisibility: "hidden",
       }}
     >
-      {/* Background Media: Static poster on mobile for 60fps butter-smooth scroll, dynamic video on desktop */}
-      {isMobile ? (
-        <img
-          key={activeVideo.posterSrc}
-          src={activeVideo.posterSrc}
-          alt={activeVideo.title}
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            transform: "translate(-50%, -50%)",
-            opacity: opacityLevel,
-            transition: "opacity 0.4s ease",
-          }}
-        />
-      ) : (
-        <video
-          ref={videoRef}
-          key={activeVideo.videoSrc}
-          src={activeVideo.videoSrc}
-          poster={activeVideo.posterSrc}
-          autoPlay
-          loop
-          muted={isMuted}
-          playsInline
-          onLoadedData={() => setIsVideoLoaded(true)}
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            transform: "translate(-50%, -50%)",
-            opacity: isVideoLoaded ? opacityLevel : 0,
-            transition: "opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
-          }}
-        />
-      )}
+      {/* Background Media: High-performance hardware-accelerated looping video across all devices */}
+      <video
+        ref={videoRef}
+        key={activeVideo.videoSrc}
+        src={activeVideo.videoSrc}
+        poster={activeVideo.posterSrc}
+        autoPlay
+        loop
+        muted
+        playsInline
+        webkit-playsinline="true"
+        x5-playsinline="true"
+        preload="auto"
+        disablePictureInPicture
+        disableRemotePlayback
+        onLoadedData={() => setIsVideoLoaded(true)}
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          transform: "translate(-50%, -50%) translateZ(0)",
+          WebkitTransform: "translate(-50%, -50%) translateZ(0)",
+          opacity: isVideoLoaded ? opacityLevel : opacityLevel * 0.8,
+          transition: "opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
+          willChange: "transform",
+        }}
+      />
 
       {/* Cinematic Vignette & Dark Contrast Overlay to guarantee WCAG AAA typography */}
       <div
