@@ -66,24 +66,29 @@ const Spider = ({ delay, left, duration, dropDepth }) => {
 export default function HangingSpiders() {
   const [spiders, setSpiders] = useState([]);
   const [cornerSpideySwing, setCornerSpideySwing] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
-    const count = isMobile ? 3 : 5;
-    const newSpiders = Array.from({ length: count }).map((_, i) => ({
-      id: i,
-      left: Math.random() * 85 + 7,
-      delay: Math.random() * 4,
-      duration: Math.random() * 3 + 5,
-      dropDepth: Math.random() * 250 + 80,
-    }));
-    setSpiders(newSpiders);
+    const mobile = typeof window !== "undefined" && (window.innerWidth < 768 || window.matchMedia("(pointer: coarse)").matches);
+    setIsMobile(mobile);
+
+    // Only spawn drop spiders on desktop devices to preserve 60fps mobile scroll
+    if (!mobile) {
+      const newSpiders = Array.from({ length: 4 }).map((_, i) => ({
+        id: i,
+        left: Math.random() * 85 + 7,
+        delay: Math.random() * 3,
+        duration: Math.random() * 3 + 5,
+        dropDepth: Math.random() * 250 + 80,
+      }));
+      setSpiders(newSpiders);
+    }
   }, []);
 
   return (
     <>
-      {/* Drop Spiders */}
-      {spiders.map((s) => (
+      {/* Drop Spiders (Desktop only) */}
+      {!isMobile && spiders.map((s) => (
         <Spider key={s.id} {...s} />
       ))}
 
@@ -97,7 +102,7 @@ export default function HangingSpiders() {
         style={{
           position: "fixed",
           top: 0,
-          right: "clamp(10px, 3vw, 40px)",
+          right: isMobile ? "8px" : "clamp(10px, 3vw, 40px)",
           zIndex: 9994,
           display: "flex",
           flexDirection: "column",
@@ -107,13 +112,17 @@ export default function HangingSpiders() {
         }}
         animate={
           cornerSpideySwing
-            ? { y: [0, -40, 20, 0], rotate: [0, 360, -15, 0] }
-            : { y: [0, 10, 0], rotate: [-3, 3, -3] }
+            ? { y: [0, -30, 15, 0], rotate: [0, 360, -10, 0] }
+            : isMobile
+            ? { y: 0, rotate: 0 }
+            : { y: [0, 8, 0], rotate: [-2, 2, -2] }
         }
         transition={
           cornerSpideySwing
-            ? { duration: 1, ease: "easeInOut" }
-            : { repeat: Infinity, duration: 4.5, ease: "easeInOut" }
+            ? { duration: 0.9, ease: "easeInOut" }
+            : isMobile
+            ? { duration: 0 }
+            : { repeat: Infinity, duration: 5, ease: "easeInOut" }
         }
       >
         {/* Glowing Web Thread */}

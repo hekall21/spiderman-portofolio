@@ -4,12 +4,13 @@ export default function CustomCursor() {
   const cursorRef = useRef(null);
   const hLineRef = useRef(null);
   const vLineRef = useRef(null);
-  const coordRef = useRef(null);
   const [isHover, setIsHover] = useState(false);
   const [coords, setCoords] = useState({ x: -100, y: -100 });
+  const [isTouchDevice, setIsTouchDevice] = useState(true); // default to true to avoid initial flash
 
   useEffect(() => {
-    const isTouch = window.matchMedia("(pointer: coarse)").matches;
+    const isTouch = window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 1024;
+    setIsTouchDevice(isTouch);
     if (isTouch) return;
 
     let rafId;
@@ -51,6 +52,8 @@ export default function CustomCursor() {
       if (rafId) cancelAnimationFrame(rafId);
     };
   }, []);
+
+  if (isTouchDevice) return null;
 
   return (
     <div className="cad-laser-cursor-container" style={{ pointerEvents: "none", position: "fixed", inset: 0, zIndex: 99999 }}>

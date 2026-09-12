@@ -17,8 +17,16 @@ export default function QuickDock() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    let ticking = false;
     const onScroll = () => {
-      setIsVisible(window.scrollY > 350);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const visible = window.scrollY > 350;
+          setIsVisible((prev) => (prev !== visible ? visible : prev));
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);

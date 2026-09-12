@@ -6,17 +6,22 @@ export default function PrecisionHUD() {
   const [timeStr, setTimeStr] = useState("");
 
   useEffect(() => {
+    const isTouch = window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 1024;
     let rafId = null;
-    const handleMouseMove = (e) => {
-      if (rafId) return;
-      rafId = requestAnimationFrame(() => {
-        if (coordsRef.current) {
-          coordsRef.current.innerText = `X:${e.clientX}PX Y:${e.clientY}PX`;
-        }
-        rafId = null;
-      });
-    };
-    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    let handleMouseMove = null;
+
+    if (!isTouch) {
+      handleMouseMove = (e) => {
+        if (rafId) return;
+        rafId = requestAnimationFrame(() => {
+          if (coordsRef.current) {
+            coordsRef.current.innerText = `X:${e.clientX}PX Y:${e.clientY}PX`;
+          }
+          rafId = null;
+        });
+      };
+      window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    }
     
     const updateTime = () => {
       const now = new Date();
@@ -26,7 +31,9 @@ export default function PrecisionHUD() {
     const timer = setInterval(updateTime, 1000);
 
     return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
+      if (handleMouseMove) {
+        window.removeEventListener("mousemove", handleMouseMove);
+      }
       if (rafId) cancelAnimationFrame(rafId);
       clearInterval(timer);
     };

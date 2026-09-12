@@ -541,18 +541,43 @@ img { max-width: 100%; display: block; }
   }
   
   .vignette {
-    opacity: 0.4 !important;
+    opacity: 0.3 !important;
   }
 
   .hero-grid-container {
     gap: 2rem !important;
   }
 
-  /* GPU-Accelerated Hardware Layers on Mobile */
-  .neon-card, #hero, .hero-grid-container, .hero-image-col {
-    transform: translateZ(0);
-    will-change: transform;
-    backface-visibility: hidden;
+  /* Lightweight Card Styling on Mobile (No expensive Gaussian blur or extra GPU compositing layers) */
+  .neon-card {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(10, 12, 18, 0.94) !important;
+    transform: none !important;
+    will-change: auto !important;
+  }
+
+  .neon-card:hover {
+    transform: none !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .project-card, .gpu-layer {
+    will-change: auto !important;
+  }
+
+  /* Content visibility skips layout & paint of off-screen sections until scrolled near viewport */
+  #about,
+  #projects,
+  #vault,
+  #skills,
+  #experience,
+  #education,
+  #certificates,
+  #notes,
+  #contact {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 700px;
   }
 }
 
@@ -678,6 +703,57 @@ canvas {
   .hero-ctas a, .hero-ctas button {
     width: 100%;
     justify-content: center;
+  }
+}
+
+/* ══════════════════════════════════════════════
+   SCROLL PROGRESS INDICATORS
+   ══════════════════════════════════════════════ */
+.scroll-progress-top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-red), var(--color-purple), var(--color-blue));
+  z-index: 99999;
+  pointer-events: none;
+  transform-origin: left;
+}
+
+.scroll-progress-vertical {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .scroll-progress-vertical {
+    display: block;
+    position: fixed;
+    right: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2px;
+    height: 140px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 9990;
+    pointer-events: none;
+    border-radius: 2px;
+  }
+  .scroll-progress-fill {
+    width: 100%;
+    background: linear-gradient(180deg, var(--color-red), var(--color-purple));
+    border-radius: 2px;
+    transition: height 0.05s linear;
+  }
+  .scroll-progress-dot {
+    position: absolute;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-red);
+    box-shadow: 0 0 10px var(--color-red);
+    transform: translate(-50%, -50%);
+    transition: top 0.05s linear;
   }
 }
 

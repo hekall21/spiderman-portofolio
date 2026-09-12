@@ -23,31 +23,48 @@ const orgIconMap = {
 
 export default function Experience() {
   const timelineRef = useRef(null);
-  const [fillHeight, setFillHeight] = useState(0);
+  const fillLineRef = useRef(null);
   const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
     if (shouldReduceMotion) {
-      setFillHeight(100);
+      if (fillLineRef.current) fillLineRef.current.style.height = "100%";
       return;
     }
+    let rafId = null;
     const onScroll = () => {
-      if (!timelineRef.current) return;
-      const rect = timelineRef.current.getBoundingClientRect();
-      const viewH = window.innerHeight;
-      if (rect.top > viewH || rect.bottom < 0) {
-        setFillHeight(0);
-        return;
-      }
-      const progress = Math.min(
-        Math.max((viewH - rect.top) / (rect.height + viewH * 0.5), 0),
-        1
-      );
-      setFillHeight(progress * 100);
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        if (!timelineRef.current || !fillLineRef.current) {
+          rafId = null;
+          return;
+        }
+        const rect = timelineRef.current.getBoundingClientRect();
+        const viewH = window.innerHeight;
+        if (rect.top > viewH) {
+          fillLineRef.current.style.height = "0%";
+          rafId = null;
+          return;
+        }
+        if (rect.bottom < 0) {
+          fillLineRef.current.style.height = "100%";
+          rafId = null;
+          return;
+        }
+        const progress = Math.min(
+          Math.max((viewH - rect.top) / (rect.height + viewH * 0.5), 0),
+          1
+        );
+        fillLineRef.current.style.height = `${progress * 100}%`;
+        rafId = null;
+      });
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, [shouldReduceMotion]);
 
   return (
@@ -86,8 +103,9 @@ export default function Experience() {
         >
           <div className="timeline-line">
             <div
+              ref={fillLineRef}
               className="timeline-line-fill"
-              style={{ height: `${fillHeight}%` }}
+              style={{ height: shouldReduceMotion ? "100%" : "0%" }}
             />
           </div>
           <div className="timeline-node" style={{ top: 0 }} />

@@ -98,9 +98,14 @@ export default function LiveVideoBackground({
     };
   }, []);
 
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.innerWidth < 768 || window.matchMedia("(pointer: coarse)").matches;
+  });
+
   // Sync play/pause with videoRef
   useEffect(() => {
-    if (!videoRef.current) return;
+    if (!videoRef.current || isMobile) return;
     if (isPlaying) {
       const playPromise = videoRef.current.play();
       if (playPromise !== undefined) {
@@ -111,7 +116,7 @@ export default function LiveVideoBackground({
     } else {
       videoRef.current.pause();
     }
-  }, [isPlaying, activeVideoIndex]);
+  }, [isPlaying, activeVideoIndex, isMobile]);
 
   return (
     <div
@@ -126,30 +131,48 @@ export default function LiveVideoBackground({
         zIndex: 0,
       }}
     >
-      {/* Video Element */}
-      <video
-        ref={videoRef}
-        key={activeVideo.videoSrc}
-        src={activeVideo.videoSrc}
-        poster={activeVideo.posterSrc}
-        autoPlay
-        loop
-        muted={isMuted}
-        playsInline
-        onLoadedData={() => setIsVideoLoaded(true)}
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          transform: "translate(-50%, -50%)",
-          opacity: isVideoLoaded ? opacityLevel : 0,
-          transition: "opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
-          filter: "saturate(1.2) contrast(1.1)",
-        }}
-      />
+      {/* Background Media: Static poster on mobile for 60fps butter-smooth scroll, dynamic video on desktop */}
+      {isMobile ? (
+        <img
+          key={activeVideo.posterSrc}
+          src={activeVideo.posterSrc}
+          alt={activeVideo.title}
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            transform: "translate(-50%, -50%)",
+            opacity: opacityLevel,
+            transition: "opacity 0.4s ease",
+          }}
+        />
+      ) : (
+        <video
+          ref={videoRef}
+          key={activeVideo.videoSrc}
+          src={activeVideo.videoSrc}
+          poster={activeVideo.posterSrc}
+          autoPlay
+          loop
+          muted={isMuted}
+          playsInline
+          onLoadedData={() => setIsVideoLoaded(true)}
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            transform: "translate(-50%, -50%)",
+            opacity: isVideoLoaded ? opacityLevel : 0,
+            transition: "opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
+          }}
+        />
+      )}
 
       {/* Cinematic Vignette & Dark Contrast Overlay to guarantee WCAG AAA typography */}
       <div

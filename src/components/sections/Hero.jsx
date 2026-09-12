@@ -99,6 +99,11 @@ export default function Hero() {
   const typedRole = useTypewriter(profile.roles, 55, 25, 2200);
   const shouldReduceMotion = useReducedMotion();
   const [spideyAction, setSpideyAction] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768 || window.matchMedia("(pointer: coarse)").matches);
+  }, []);
 
   const handleSpideyClick = () => {
     setSpideyAction(true);
@@ -533,13 +538,15 @@ export default function Hero() {
             animate={
               spideyAction
                 ? { y: [0, -25, 10, 0], rotate: [0, 360, -10, 0], scale: [1, 1.15, 1] }
-                : shouldReduceMotion
-                ? {}
+                : shouldReduceMotion || isMobile
+                ? { y: 0, rotate: 0 }
                 : { y: [0, 10, 0], rotate: [-3, 3, -3] }
             }
             transition={
               spideyAction
                 ? { duration: 1.1, ease: "easeInOut" }
+                : isMobile
+                ? { duration: 0 }
                 : { repeat: Infinity, duration: 4.2, ease: "easeInOut" }
             }
           >
