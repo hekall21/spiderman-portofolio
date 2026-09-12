@@ -1,5 +1,6 @@
 export const multiverseCategories = [
-  { id: "all", label: "SEMUA ASSET (26)", icon: "🕷️" },
+  { id: "all", label: "SEMUA ASSET (30)", icon: "🕷️" },
+  { id: "live", label: "LIVE VIDEO (4)", icon: "🎬" },
   { id: "banners", label: "HERO BANNERS (7)", icon: "🕸️" },
   { id: "wallpapers", label: "MOBILE WALLPAPERS (10)", icon: "📱" },
   { id: "ui", label: "UI & SCRAPBOOKS (4)", icon: "🎨" },
@@ -7,6 +8,77 @@ export const multiverseCategories = [
 ];
 
 export const multiverseAssets = [
+  // ──────────────────────────────────────────────
+  // 00_SpiderMan_Live_Wallpapers (4 Video Items)
+  // ──────────────────────────────────────────────
+  {
+    id: "spiderman-tasm2-live-wallpaper",
+    title: "The Amazing Spider-Man 2 Live Motion",
+    subtitle: "High-Definition 720p Looping Web-Line Aerobatics",
+    category: "live",
+    universe: "Earth-120703 // TASM 2 Live",
+    src: "/assets/live-wallpapers/spiderman-tasm2-live-poster.jpg",
+    videoSrc: "/assets/live-wallpapers/spiderman-tasm2-live-wallpaper.mp4",
+    isVideo: true,
+    orientation: "portrait",
+    dimensions: "720p HD Video (9.5MB)",
+    aspectRatio: "9:16",
+    tags: ["Live Wallpaper", "MP4 Video", "Andrew Garfield", "Looping Animation"],
+    description: "Live wallpaper looping video resolusi tinggi dari The Amazing Spider-Man 2 saat berayun di antara gedung-gedung New York dengan angin mengibaskan kostum secara dinamis.",
+    colorAccent: "#e50914",
+    downloadName: "spiderman-tasm2-live-wallpaper.mp4"
+  },
+  {
+    id: "spiderman-8k-pc-live-wallpaper",
+    title: "Spider-Man Ultra HD PC Live Horizon",
+    subtitle: "8K-Style Looping Atmospheric Cityscape Ambient",
+    category: "live",
+    universe: "Earth-1048 // Horizon Protocol",
+    src: "/assets/live-wallpapers/spiderman-8k-pc-poster.jpg",
+    videoSrc: "/assets/live-wallpapers/spiderman-8k-pc-live-wallpaper.mp4",
+    isVideo: true,
+    orientation: "landscape",
+    dimensions: "720p HD Video (1.8MB)",
+    aspectRatio: "16:9",
+    tags: ["Live Wallpaper", "PC Ambient", "Insomniac Suit", "City Skyline"],
+    description: "Video live wallpaper sinematik untuk layar PC desktop dengan Spider-Man mengawasi cakrawala kota dengan efek partikel dan cahaya lampu kota yang bergerak halus.",
+    colorAccent: "#00f0ff",
+    downloadName: "spiderman-8k-pc-live-wallpaper.mp4"
+  },
+  {
+    id: "spiderman-action-cinematic-live",
+    title: "Spider-Man Kinetic Combat Reel",
+    subtitle: "High-Octane Dynamic Camera Flight & Web Strike",
+    category: "live",
+    universe: "Earth-1610 // Dynamic Action",
+    src: "/assets/live-wallpapers/spiderman-action-cinematic-poster.jpg",
+    videoSrc: "/assets/live-wallpapers/spiderman-action-cinematic-live-wallpaper.mp4",
+    isVideo: true,
+    orientation: "landscape",
+    dimensions: "720p HD Video (625KB)",
+    aspectRatio: "16:9",
+    tags: ["Action Reel", "Fast Pace", "Web Strike", "Combat Motion"],
+    description: "Klip video aksi koreografi Spider-Man dengan gerakan kamera sinematik dinamis dan efek visual intens.",
+    colorAccent: "#ff0055",
+    downloadName: "spiderman-action-cinematic-live-wallpaper.mp4"
+  },
+  {
+    id: "spidey-tingle-multiverse-live",
+    title: "Spider-Sense Multiverse of Madness",
+    subtitle: "Peter Parker Aesthetic Sensory Waveform",
+    category: "live",
+    universe: "Earth-616 // Spider-Sense Astral",
+    src: "/assets/live-wallpapers/spidey-tingle-multiverse-poster.jpg",
+    videoSrc: "/assets/live-wallpapers/spidey-tingle-multiverse-live-wallpaper.mp4",
+    isVideo: true,
+    orientation: "portrait",
+    dimensions: "720p HD Video (2.2MB)",
+    aspectRatio: "9:16",
+    tags: ["Spider-Sense", "Multiverse Aesthetic", "Peter Parker", "Aura FX"],
+    description: "Visualisasi Spider-Sense (Spidey Tingle) Peter Parker dengan efek aura multiverse kosmis dan gelombang sensorik psionik berputar di sekeliling kepala.",
+    colorAccent: "#ffe600",
+    downloadName: "spidey-tingle-multiverse-live-wallpaper.mp4"
+  },
   // ──────────────────────────────────────────────
   // 01_Spiderman_Hero_Banners (7 Items)
   // ──────────────────────────────────────────────

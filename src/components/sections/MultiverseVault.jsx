@@ -96,8 +96,8 @@ export default function MultiverseVault() {
     if (e) e.stopPropagation();
     playHapticTone("click");
     const link = document.createElement("a");
-    link.href = asset.src;
-    link.download = asset.downloadName || "spiderman-asset.jpg";
+    link.href = asset.isVideo && asset.videoSrc ? asset.videoSrc : asset.src;
+    link.download = asset.downloadName || (asset.isVideo ? "spiderman-live-wallpaper.mp4" : "spiderman-asset.jpg");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -678,7 +678,7 @@ export default function MultiverseVault() {
                           letterSpacing: "0.06em",
                         }}
                       >
-                        {asset.category}
+                        {asset.isVideo ? "🎬 LIVE VIDEO" : asset.category}
                       </span>
 
                       <span
@@ -992,17 +992,36 @@ export default function MultiverseVault() {
                     minHeight: "420px",
                   }}
                 >
-                  <img
-                    src={activeAsset.src}
-                    alt={activeAsset.title}
-                    style={{
-                      maxWidth: "100%",
-                      maxHeight: "68vh",
-                      objectFit: "contain",
-                      borderRadius: "12px",
-                      boxShadow: "0 20px 40px rgba(0,0,0,0.8)",
-                    }}
-                  />
+                  {activeAsset.isVideo && activeAsset.videoSrc ? (
+                    <video
+                      src={activeAsset.videoSrc}
+                      poster={activeAsset.src}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      controls
+                      style={{
+                        maxWidth: "100%",
+                        maxHeight: "68vh",
+                        borderRadius: "12px",
+                        boxShadow: "0 20px 40px rgba(0,0,0,0.8), 0 0 30px rgba(229,9,20,0.35)",
+                        background: "#000",
+                      }}
+                    />
+                  ) : (
+                    <img
+                      src={activeAsset.src}
+                      alt={activeAsset.title}
+                      style={{
+                        maxWidth: "100%",
+                        maxHeight: "68vh",
+                        objectFit: "contain",
+                        borderRadius: "12px",
+                        boxShadow: "0 20px 40px rgba(0,0,0,0.8)",
+                      }}
+                    />
+                  )}
 
                   {/* Previous / Next Arrow Overlays */}
                   <button
