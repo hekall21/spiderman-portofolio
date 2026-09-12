@@ -17,17 +17,29 @@ import TerminalBoot from "./components/common/TerminalBoot";
 import HangingSpiders from "./components/common/HangingSpiders";
 import QuickDock from "./components/common/QuickDock";
 import PrecisionHUD from "./components/common/PrecisionHUD";
+import MultiverseVault from "./components/sections/MultiverseVault";
+import CurtainSplitTransition from "./components/common/CurtainSplitTransition";
 import { useState } from "react";
 
 export default function App() {
   const [isBootComplete, setIsBootComplete] = useState(false);
+  const [isRevealingCurtain, setIsRevealingCurtain] = useState(false);
+
+  const handleBootComplete = () => {
+    setIsBootComplete(true);
+    setIsRevealingCurtain(true);
+    setTimeout(() => setIsRevealingCurtain(false), 1400);
+  };
 
   return (
     <>
+      {/* Kexsio-inspired Curtain Split Transition */}
+      <CurtainSplitTransition isRevealing={isRevealingCurtain} />
+
       {/* Music Player must be mounted immediately so TerminalBoot can trigger it */}
       <MusicPlayer />
 
-      {!isBootComplete && <TerminalBoot onComplete={() => setIsBootComplete(true)} />}
+      {!isBootComplete && <TerminalBoot onComplete={handleBootComplete} />}
 
       {isBootComplete && (
         <>
@@ -60,6 +72,7 @@ export default function App() {
             <Marquee />
             <About />
             <Projects />
+            <MultiverseVault />
             <Skills />
             <Experience />
             <Education />
