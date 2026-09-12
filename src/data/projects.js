@@ -2,11 +2,63 @@ export const projectCategories = [
   { id: "all", label: "SEMUA PROJECT" },
   { id: "3d", label: "🪐 3D WEBGL & SPATIAL" },
   { id: "apps", label: "⚡ WEB APPS & ARCHITECTURE" },
+  { id: "games", label: "🎮 ARCADE & GAMES" },
   { id: "creative", label: "🎨 CREATIVE & AUDIO" },
   { id: "tools", label: "🛠️ DEV TOOLS & AUTOMATION" }
 ];
 
 export const projects = [
+  {
+    id: "spidey-arcade",
+    title: "Spider-Verse Web Slinger Arcade",
+    subtitle: "Canvas 2D Physics, Web Audio Synthesizer & Combo Overdrive",
+    category: "games",
+    earthBadge: "🕷️ Earth-1610 // Spider-Verse Arcade",
+    accentColor: "#e50914",
+    modelType: "cube",
+    interactiveComponent: "spidey-arcade",
+    image: "/assets/banners/spiderman-bold-typography-poster-banner.jpg",
+    videoPreview: "/assets/live-wallpapers/spiderman-action-cinematic-live-wallpaper.mp4",
+    description:
+      "Game web arcade Spider-Verse 2D berkecepatan 60fps dengan sintetis Web Audio API tanpa dependensi eksternal, kontrol multi-karakter (Miles Morales venom shock, Peter Parker rapid-fire, Gwen Stacy spread shot), dan sistem kombo reaktif.",
+    keyFeatures: [
+      "Engine Audio Sintetis Prosedural Web Audio API (Thwip, Boom, Venom Blast)",
+      "Multi-Karakter dengan Tipe Serangan Berbeda (Miles, Peter, Gwen)",
+      "Sistem Kombo Bertingkat & High Score Tersimpan di LocalStorage",
+      "Dukungan Penuh Keyboard, Mouse Aim, dan Sentuhan Mobile"
+    ],
+    techStack: ["React 19", "HTML5 Canvas", "Web Audio API", "Physics 2D", "Tailwind CSS"],
+    demoUrl: "https://spiderman-portofolio.vercel.app/#projects",
+    githubUrl: "https://github.com/hekall21/spiderman-portofolio",
+    is3D: true,
+    isFeatured: true,
+    stats: { stars: "Arcade Game", status: "Live Playable" }
+  },
+  {
+    id: "white-desert-antarctica",
+    title: "White Desert Antarctica Expedition",
+    subtitle: "Ultra-Luxury Polar Expedition Brand & Aviation HUD",
+    category: "apps",
+    earthBadge: "❄️ 71°S // Wolf's Fang Interior",
+    accentColor: "#38bdf8",
+    modelType: "orb",
+    image: "/assets/banners/white-desert-luxury-antarctica.jpg",
+    videoPreview: "/assets/live-wallpapers/spiderman-8k-pc-live-wallpaper.mp4",
+    description:
+      "Platform web ultra-luxury expedition terinspirasi White Desert Antarctica. Dibangun dengan estetika editorial Awwwards, visualizer logistik penerbangan jet pribadi Gulfstream G550 ke runway es biru Wolf's Fang 3.000m, heated pods showcase, dan sistem concierge terenkripsi.",
+    keyFeatures: [
+      "Private Jet Flight Telemetry HUD & Blue Ice Runway Visualizer",
+      "Astronaut-Inspired Heated Pods & Domes Showcase (Echo & Whichaway)",
+      "Bespoke Polar Itinerary Concierge & VIP Manifest Reservation",
+      "100% Climate Neutral & Akreditasi Konservasi IAATO Resmi"
+    ],
+    techStack: ["React 19", "Tailwind CSS v4", "Framer Motion", "Vite 8", "Aviation UX"],
+    demoUrl: "https://hekall21.github.io/white-desert-antarctica/",
+    githubUrl: "https://github.com/hekall21/white-desert-antarctica",
+    is3D: true,
+    isFeatured: true,
+    stats: { stars: "Ultra Luxury", status: "Production Ready" }
+  },
   {
     id: "kinetic-matrix",
     title: "Kinetic Topological Matrix",

@@ -4,6 +4,7 @@ import SectionHeading from "../common/SectionHeading";
 import SpiderHolo3D from "../common/SpiderHolo3D";
 import KineticMatrix from "@/components/ui/kinetic-matrix";
 import MusicHero from "@/components/ui/scroll-locked-video-hero";
+import SpideyArcade from "@/components/ui/spidey-arcade";
 import { projects, projectCategories } from "../../data/projects";
 import { fadeUp, staggerContainer, defaultViewport } from "../../animations/variants";
 import {
@@ -969,7 +970,11 @@ export default function Projects() {
               <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
                 <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#00f0ff", boxShadow: "0 0 10px #00f0ff" }} />
                 <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.8rem", color: "#fff", fontWeight: 700 }}>
-                  {activeLabModal === "kinetic-matrix" ? "KINETIC TOPOLOGICAL MATRIX LAB" : "SCROLL-LOCKED VIDEO HERO LAB"}
+                  {activeLabModal === "kinetic-matrix"
+                    ? "KINETIC TOPOLOGICAL MATRIX LAB"
+                    : activeLabModal === "spidey-arcade"
+                    ? "🕷️ SPIDER-VERSE WEB SLINGER ARCADE // GAME LAB"
+                    : "SCROLL-LOCKED VIDEO HERO LAB"}
                 </span>
                 <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "var(--color-muted)", background: "rgba(255,255,255,0.06)", padding: "0.15rem 0.5rem", borderRadius: "4px" }}>
                   INTERACTIVE PREVIEW
@@ -1017,6 +1022,10 @@ export default function Projects() {
 
               {activeLabModal === "scroll-hero" && (
                 <MusicHero fullBleed={false} style={{ height: "100%", width: "100%" }} />
+              )}
+
+              {activeLabModal === "spidey-arcade" && (
+                <SpideyArcade className="h-full w-full" />
               )}
             </div>
           </motion.div>
