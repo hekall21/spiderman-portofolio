@@ -17,7 +17,10 @@ import {
   Code2,
   Maximize2,
   X,
-  Play
+  Play,
+  Film,
+  Image as ImageIcon,
+  Box,
 } from "lucide-react";
 
 function GithubIcon({ size = 16 }) {
@@ -33,6 +36,7 @@ export default function Projects() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedFeaturedProject, setSelectedFeaturedProject] = useState(projects[0]);
   const [activeLabModal, setActiveLabModal] = useState(null);
+  const [stageViewMode, setStageViewMode] = useState("visual"); // "visual" | "3d"
 
   // Filtered projects
   const filteredProjects = useMemo(() => {
@@ -341,24 +345,179 @@ export default function Projects() {
               </div>
             </div>
 
-            {/* Right Col: Live Interactive 3D Hologram Canvas */}
+            {/* Right Col: Live Interactive Media & 3D Hologram Canvas */}
             <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-              <div style={{ position: "relative" }}>
-                <SpiderHolo3D
-                  modelType={selectedFeaturedProject.modelType || "orb"}
-                  accentColor={selectedFeaturedProject.accentColor}
-                  height="340px"
-                  interactive={true}
-                  autoRotate={true}
-                  showBadge={true}
-                  multiverseName={selectedFeaturedProject.earthBadge}
-                />
+              {/* Dual Mode Switcher: 4K Visual Showcase vs 3D Hologram */}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  background: "rgba(0, 0, 0, 0.4)",
+                  padding: "0.3rem 0.5rem",
+                  borderRadius: "10px",
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                }}
+              >
+                <div style={{ display: "flex", gap: "0.3rem" }}>
+                  <button
+                    onClick={() => setStageViewMode("visual")}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.35rem",
+                      padding: "0.35rem 0.75rem",
+                      borderRadius: "6px",
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "0.68rem",
+                      fontWeight: 600,
+                      cursor: "pointer",
+                      background: stageViewMode === "visual" ? "rgba(0, 240, 255, 0.15)" : "transparent",
+                      border: stageViewMode === "visual" ? "1px solid rgba(0, 240, 255, 0.4)" : "1px solid transparent",
+                      color: stageViewMode === "visual" ? "#00f0ff" : "var(--color-muted)",
+                      transition: "all 0.2s",
+                    }}
+                  >
+                    <ImageIcon size={12} />
+                    <span>4K VISUAL SHOWCASE</span>
+                  </button>
+
+                  <button
+                    onClick={() => setStageViewMode("3d")}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.35rem",
+                      padding: "0.35rem 0.75rem",
+                      borderRadius: "6px",
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "0.68rem",
+                      fontWeight: 600,
+                      cursor: "pointer",
+                      background: stageViewMode === "3d" ? "rgba(172, 75, 255, 0.15)" : "transparent",
+                      border: stageViewMode === "3d" ? "1px solid rgba(172, 75, 255, 0.4)" : "1px solid transparent",
+                      color: stageViewMode === "3d" ? "#ac4bff" : "var(--color-muted)",
+                      transition: "all 0.2s",
+                    }}
+                  >
+                    <Box size={12} />
+                    <span>3D HOLOGRAM</span>
+                  </button>
+                </div>
+
+                <span
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "0.62rem",
+                    color: selectedFeaturedProject.accentColor,
+                    paddingRight: "0.4rem",
+                    fontWeight: 600,
+                  }}
+                >
+                  {selectedFeaturedProject.earthBadge}
+                </span>
+              </div>
+
+              {/* Media Content Display */}
+              <div
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  height: "340px",
+                  borderRadius: "16px",
+                  overflow: "hidden",
+                  background: "rgba(5, 7, 14, 0.95)",
+                  border: `1px solid ${selectedFeaturedProject.accentColor}40`,
+                  boxShadow: `0 15px 35px rgba(0, 0, 0, 0.7), 0 0 25px ${selectedFeaturedProject.accentColor}18`,
+                }}
+              >
+                {stageViewMode === "visual" ? (
+                  <div style={{ position: "relative", width: "100%", height: "100%" }}>
+                    {selectedFeaturedProject.videoPreview ? (
+                      <video
+                        key={selectedFeaturedProject.videoPreview}
+                        src={selectedFeaturedProject.videoPreview}
+                        poster={selectedFeaturedProject.image}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                          filter: "brightness(0.95) contrast(1.1)",
+                        }}
+                      />
+                    ) : (
+                      <img
+                        src={selectedFeaturedProject.image}
+                        alt={selectedFeaturedProject.title}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                          filter: "brightness(0.95) contrast(1.05)",
+                        }}
+                      />
+                    )}
+
+                    {/* HUD Scanlines & Frame Overlays */}
+                    <div
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        background: "linear-gradient(rgba(0,0,0,0) 60%, rgba(0,0,0,0.85) 100%)",
+                        pointerEvents: "none",
+                      }}
+                    />
+
+                    {/* Tech Corner Crosshairs */}
+                    <div style={{ position: "absolute", top: "10px", left: "12px", fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: selectedFeaturedProject.accentColor, fontWeight: 800 }}>+</div>
+                    <div style={{ position: "absolute", top: "10px", right: "12px", fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: selectedFeaturedProject.accentColor, fontWeight: 800 }}>+</div>
+                    <div style={{ position: "absolute", bottom: "10px", left: "12px", fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: selectedFeaturedProject.accentColor, fontWeight: 800 }}>+</div>
+                    <div style={{ position: "absolute", bottom: "10px", right: "12px", fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: selectedFeaturedProject.accentColor, fontWeight: 800 }}>+</div>
+
+                    {/* Badge at Bottom Left of Preview */}
+                    <div
+                      style={{
+                        position: "absolute",
+                        bottom: "14px",
+                        left: "14px",
+                        background: "rgba(5, 7, 14, 0.85)",
+                        backdropFilter: "blur(8px)",
+                        border: `1px solid ${selectedFeaturedProject.accentColor}50`,
+                        padding: "0.3rem 0.7rem",
+                        borderRadius: "6px",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.4rem",
+                        fontFamily: "var(--font-mono)",
+                        fontSize: "0.68rem",
+                        color: "#ffffff",
+                      }}
+                    >
+                      <Sparkles size={11} color={selectedFeaturedProject.accentColor} />
+                      <span>{selectedFeaturedProject.title} // 4K RENDER</span>
+                    </div>
+                  </div>
+                ) : (
+                  <SpiderHolo3D
+                    modelType={selectedFeaturedProject.modelType || "orb"}
+                    accentColor={selectedFeaturedProject.accentColor}
+                    height="340px"
+                    interactive={true}
+                    autoRotate={true}
+                    showBadge={true}
+                    multiverseName={selectedFeaturedProject.earthBadge}
+                  />
+                )}
               </div>
 
               {/* Quick Model Selector Pills */}
               <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", flexWrap: "wrap" }}>
                 <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", color: "var(--color-muted)", marginRight: "0.25rem" }}>
-                  INSPECT 3D MODEL:
+                  PILIH LAB SHOWCASE:
                 </span>
                 {projects.slice(0, 6).map((p) => {
                   const isSelected = selectedFeaturedProject.id === p.id;
@@ -373,7 +532,7 @@ export default function Projects() {
                         fontSize: "0.68rem",
                         cursor: "pointer",
                         border: isSelected ? `1px solid ${p.accentColor}` : "1px solid rgba(255,255,255,0.08)",
-                        background: isSelected ? `${p.accentColor}20` : "rgba(255,255,255,0.03)",
+                        background: isSelected ? `${p.accentColor}25` : "rgba(255,255,255,0.03)",
                         color: isSelected ? "#ffffff" : "var(--color-muted)",
                         transition: "all 0.2s",
                       }}
@@ -476,6 +635,78 @@ export default function Projects() {
                 />
 
                 <div>
+                  {/* High-Impact 16:9 Media Preview Box */}
+                  <div
+                    style={{
+                      position: "relative",
+                      width: "100%",
+                      aspectRatio: "16/9",
+                      borderRadius: "12px",
+                      overflow: "hidden",
+                      marginBottom: "1rem",
+                      background: "#080a12",
+                      border: `1px solid ${project.accentColor}30`,
+                      boxShadow: "0 10px 25px rgba(0, 0, 0, 0.5)",
+                    }}
+                  >
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      loading="lazy"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        transition: "transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s",
+                        filter: "brightness(0.92) contrast(1.08)",
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.08)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1.0)")}
+                    />
+
+                    {/* Scanline texture */}
+                    <div
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        background: "linear-gradient(rgba(0,0,0,0) 50%, rgba(0,0,0,0.3) 50%)",
+                        backgroundSize: "100% 4px",
+                        pointerEvents: "none",
+                        opacity: 0.5,
+                      }}
+                    />
+
+                    {/* Tech Corner Crosshairs */}
+                    <span style={{ position: "absolute", top: "6px", left: "8px", fontFamily: "var(--font-mono)", fontSize: "0.6rem", color: project.accentColor, fontWeight: 800 }}>+</span>
+                    <span style={{ position: "absolute", top: "6px", right: "8px", fontFamily: "var(--font-mono)", fontSize: "0.6rem", color: project.accentColor, fontWeight: 800 }}>+</span>
+
+                    {/* Video indicator badge if has videoPreview */}
+                    {project.videoPreview && (
+                      <div
+                        style={{
+                          position: "absolute",
+                          bottom: "8px",
+                          right: "8px",
+                          background: "rgba(5, 7, 14, 0.85)",
+                          backdropFilter: "blur(6px)",
+                          border: "1px solid rgba(0, 240, 255, 0.4)",
+                          padding: "0.18rem 0.45rem",
+                          borderRadius: "4px",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "0.3rem",
+                          fontFamily: "var(--font-mono)",
+                          fontSize: "0.6rem",
+                          color: "#00f0ff",
+                          fontWeight: 700,
+                        }}
+                      >
+                        <Film size={10} />
+                        <span>VIDEO</span>
+                      </div>
+                    )}
+                  </div>
+
                   {/* Top Metadata Row */}
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.85rem" }}>
                     <span

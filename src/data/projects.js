@@ -16,6 +16,8 @@ export const projects = [
     accentColor: "#00f0ff",
     modelType: "wave",
     interactiveComponent: "kinetic-matrix",
+    image: "/assets/banners/spiderman-mcu-web-grid-dark-banner.jpg",
+    videoPreview: "/assets/live-wallpapers/spiderman-8k-pc-live-wallpaper.mp4",
     description:
       "Simulasi matriks topologi interaktif berbasis Canvas 2D dan hukum pegas Hooke (Spring-Mass). Menampilkan propagasi gelombang kejut gravitasi saat klik, transfer data sinaptik dinamis, dan sinkronisasi mode gelap/terang.",
     keyFeatures: [
@@ -40,6 +42,8 @@ export const projects = [
     accentColor: "#f3724c",
     modelType: "laptop",
     interactiveComponent: "scroll-hero",
+    image: "/assets/ui/spiderman-streaming-ui-concept-dashboard.jpg",
+    videoPreview: "/assets/live-wallpapers/spiderman-tasm2-live-wallpaper.mp4",
     description:
       "Komponen runner music hero dengan floating 3D screen yang miring mengikuti kursor, momentum physics coverflow tracklist, looping video tanpa jeda dengan crossfading, dan audio click sintetis Web Audio API.",
     keyFeatures: [
@@ -63,6 +67,8 @@ export const projects = [
     earthBadge: "🕷️ Earth-1610 // Spatial Core",
     accentColor: "#00f0ff",
     modelType: "orb",
+    image: "/assets/ui/spiderman-ui-desktop-widget-dashboard.jpg",
+    videoPreview: "/assets/live-wallpapers/spidey-tingle-multiverse-live-wallpaper.mp4",
     description:
       "Web galeri media interaktif kelas dunia terinspirasi Michael Gatt. Memadukan fotografi sinematik, fisika spasial mengambang (floating draggable nodes), audio soundscape ambient, instant lightbox 4K, dan backend Google Sheets serverless real-time.",
     keyFeatures: [
@@ -87,6 +93,7 @@ export const projects = [
     earthBadge: "🕷️ Earth-928 // 2099 Tech",
     accentColor: "#e50914",
     modelType: "laptop",
+    image: "/assets/banners/spiderman-crouched-landing-dark-banner.jpg",
     description:
       "Aplikasi developer tool berbasis Three.js WebGL untuk merender screenshot website ke atas layar MacBook 3D interaktif yang dapat diputar 360 derajat, disesuaikan pencahayaannya, dan diekspor ke format PNG resolusi tinggi secara instan.",
     keyFeatures: [
@@ -111,6 +118,8 @@ export const projects = [
     earthBadge: "🕷️ Earth-616 // Web Dynamics",
     accentColor: "#ac4bff",
     modelType: "wave",
+    image: "/assets/banners/spiderman-neon-smoke-splash-banner.jpg",
+    videoPreview: "/assets/live-wallpapers/spiderman-action-cinematic-live-wallpaper.mp4",
     description:
       "Simulasi visual 10.000 partikel kuantum yang bergelombang secara dinamis dengan trigonometri prosedural, gravitasi interaktif kursor mouse, dan custom GLSL vertex shaders dengan akselerasi GPU 60fps konstan.",
     keyFeatures: [
@@ -135,6 +144,7 @@ export const projects = [
     earthBadge: "🕷️ Earth-65 // Ghost-Spider Vibe",
     accentColor: "#10b981",
     modelType: "cube",
+    image: "/assets/banners/spiderman-bold-typography-poster-banner.jpg",
     description:
       "Eksplorasi tipografi kinetik editorial 3D dalam bentuk kubus interaktif terinspirasi standar Produx Studio DESIGN_2.md. Menampilkan tekstur tipografi dinamis, pencahayaan multi-titik, dan gestur drag inersia.",
     keyFeatures: [
@@ -159,6 +169,7 @@ export const projects = [
     earthBadge: "🕷️ Earth-1610 // Precision Hub",
     accentColor: "#38bdf8",
     modelType: "torus",
+    image: "/assets/ui/spiderman-daily-bugle-newspaper-collage.jpg",
     description:
       "Aplikasi manajemen task dan sprint enterprise dengan estetika neo-dark Linear/Vercel (DESIGN.md). Dilengkapi Command Palette (Cmd+K) keyboard-first, filter multi-layer, drag-and-drop kanban board, dan zero layout shifts.",
     keyFeatures: [
@@ -183,6 +194,7 @@ export const projects = [
     earthBadge: "🕷️ Earth-928 // Sonic Array",
     accentColor: "#f59e0b",
     modelType: "towers",
+    image: "/assets/banners/spiderman-dark-minimalist-shadow-banner.jpg",
     description:
       "Visualizer audio spasial 3D melingkar yang menganalisis spektrum frekuensi audio secara real-time via Web Audio API, memproyeksikannya menjadi pilar menara 3D yang berdenyut dengan gradien neon Spotify.",
     keyFeatures: [
@@ -207,6 +219,7 @@ export const projects = [
     earthBadge: "🕷️ Earth-616 // Retroverse",
     accentColor: "#ec4899",
     modelType: "wave",
+    image: "/assets/banners/spiderman-manga-speedlines-banner.jpg",
     description:
       "Perjalanan tak bertepi di atas grid kawat neon retro synthwave 80-an dengan matahari terbenam bergaris prosedural dan efek kabut horizon bernuansa synth cyberpunk.",
     keyFeatures: [
@@ -231,6 +244,7 @@ export const projects = [
     earthBadge: "🕷️ Earth-65 // Multiverse Cosmos",
     accentColor: "#3b82f6",
     modelType: "orb",
+    image: "/assets/banners/spiderman-marvel-studios-poster-banner.jpg",
     description:
       "Simulasi tata surya 3D interaktif dengan orbit planet matematis presisi, cincin Saturnus fotorealistik, pelacakan kamera fokus tiap planet, dan HUD informasi astronomi.",
     keyFeatures: [
@@ -255,6 +269,7 @@ export const projects = [
     earthBadge: "🕷️ Earth-1610 // Sonic Beat",
     accentColor: "#1db954",
     modelType: "torus",
+    image: "/assets/aesthetic/aesthetic-sza-sos-ocean-diving-board.jpg",
     description:
       "Visualizer musik audio spasial bertema obsidian green Spotify dengan busur frekuensi taktil, pemutar audio terintegrasi, visualizer gelombang responsif, dan metadata album.",
     keyFeatures: [
@@ -278,6 +293,7 @@ export const projects = [
     earthBadge: "🕷️ Earth-928 // Cyber Vault",
     accentColor: "#635bff",
     modelType: "cube",
+    image: "/assets/aesthetic/aesthetic-cinematic-film-set-backview.jpg",
     description:
       "Simulator sistem pembayaran modern dengan animasi mesh gradien blurple presisi, validasi input kartu kredit real-time, micro-interactions tactile haptic, dan receipt generator.",
     keyFeatures: [
@@ -301,6 +317,7 @@ export const projects = [
     earthBadge: "🕷️ Earth-616 // Data Matrix",
     accentColor: "#3ecf8e",
     modelType: "torus",
+    image: "/assets/ui/spiderman-comic-scrapbook-stickers-collage.jpg",
     description:
       "Platform visualisasi skema database dan runner query SQL berbasis web terinspirasi Supabase. Menampilkan relasi antar tabel (ERD), syntax highlighter, dan eksekusi query interaktif.",
     keyFeatures: [
@@ -324,6 +341,7 @@ export const projects = [
     earthBadge: "🕷️ Earth-1610 // Microservices",
     accentColor: "#e50914",
     modelType: "cube",
+    image: "/assets/aesthetic/aesthetic-sunset-beach-silhouette.jpg",
     description:
       "Suite utilitas otomasi pengembang untuk ekstraksi media berkecepatan tinggi, integrasi AI prompt formatter, dan microservices modular berstandar Clean Architecture.",
     keyFeatures: [

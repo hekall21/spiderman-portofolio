@@ -70,24 +70,33 @@ export default function MultiverseVault() {
     playHapticTone("success");
     setActiveLiveWallpaper(asset.src);
 
-    // Apply live wallpaper to body background overlay
-    let dynamicStyleEl = document.getElementById("dynamic-spidey-bg");
-    if (!dynamicStyleEl) {
-      dynamicStyleEl = document.createElement("style");
-      dynamicStyleEl.id = "dynamic-spidey-bg";
-      document.head.appendChild(dynamicStyleEl);
-    }
-    dynamicStyleEl.innerHTML = `
-      body::before {
-        background-image: url('${asset.src}') !important;
-        opacity: 0.22 !important;
-        background-size: cover !important;
-        background-position: center !important;
-        transition: background-image 0.6s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    if (asset.isVideo && asset.videoSrc) {
+      window.dispatchEvent(
+        new CustomEvent("set-spidey-live-wallpaper", {
+          detail: { videoSrc: asset.videoSrc }
+        })
+      );
+      setToastMessage(`🎬 Live Video Wallpaper Diaktifkan: ${asset.title}`);
+    } else {
+      // Apply live wallpaper image to body background overlay
+      let dynamicStyleEl = document.getElementById("dynamic-spidey-bg");
+      if (!dynamicStyleEl) {
+        dynamicStyleEl = document.createElement("style");
+        dynamicStyleEl.id = "dynamic-spidey-bg";
+        document.head.appendChild(dynamicStyleEl);
       }
-    `;
+      dynamicStyleEl.innerHTML = `
+        body::before {
+          background-image: url('${asset.src}') !important;
+          opacity: 0.22 !important;
+          background-size: cover !important;
+          background-position: center !important;
+          transition: background-image 0.6s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+      `;
+      setToastMessage(`🕸️ Wallpaper Diaktifkan: ${asset.title}`);
+    }
 
-    setToastMessage(`🕸️ Live Wallpaper Diaktifkan: ${asset.title}`);
     setTimeout(() => setToastMessage(null), 3500);
   }, []);
 

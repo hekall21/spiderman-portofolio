@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import SectionHeading from "../common/SectionHeading";
 import Counter from "../common/Counter";
@@ -17,7 +18,37 @@ import {
   Film,
   Video,
   Code2,
+  Camera,
+  Layers,
+  ChevronRight,
 } from "lucide-react";
+
+const visualDossier = [
+  {
+    title: "The Daily Bugle Newspaper Collage",
+    src: "/assets/ui/spiderman-daily-bugle-newspaper-collage.jpg",
+    subtitle: "New York Gazette & Spidey Headlines",
+    badge: "Press Archive",
+  },
+  {
+    title: "Comic Scrapbook & Stickers Collage",
+    src: "/assets/ui/spiderman-comic-scrapbook-stickers-collage.jpg",
+    subtitle: "Retro Pop-Art & Multi-Dimension Decals",
+    badge: "Creative Lab",
+  },
+  {
+    title: "Cinematic Film Set Backview",
+    src: "/assets/aesthetic/aesthetic-cinematic-film-set-backview.jpg",
+    subtitle: "Director's Cut & Studio Lighting",
+    badge: "Production Vibe",
+  },
+  {
+    title: "Ocean Diving Board Solitude",
+    src: "/assets/aesthetic/aesthetic-sza-sos-ocean-diving-board.jpg",
+    subtitle: "Atmospheric Blue Gradient Horizon",
+    badge: "Mood Board",
+  },
+];
 
 const hobbyIconMap = {
   Basketball: Dumbbell,
@@ -29,6 +60,8 @@ const hobbyIconMap = {
 };
 
 export default function About() {
+  const [activeDossierIdx, setActiveDossierIdx] = useState(0);
+  const currentDossier = visualDossier[activeDossierIdx];
   return (
     <section id="about" style={{ position: "relative", overflow: "hidden" }}>
       <div className="section">
@@ -242,6 +275,177 @@ export default function About() {
                     </div>
                   ))}
                 </div>
+              </div>
+            </motion.div>
+
+            {/* 3rd Card: Spider-Verse Visual Dossier & Photographic Archive */}
+            <motion.div
+              variants={fadeUp}
+              className="neon-card with-crosshairs"
+              style={{
+                padding: "1.75rem",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                position: "relative",
+                overflow: "hidden",
+              }}
+            >
+              <div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    marginBottom: "1rem",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <Camera size={18} color="var(--color-cyan, #00f0ff)" />
+                    <span
+                      style={{
+                        fontFamily: "var(--font-mono)",
+                        fontSize: "0.72rem",
+                        color: "var(--color-cyan, #00f0ff)",
+                        letterSpacing: "0.15em",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      VISUAL DOSSIER // ARCHIVE
+                    </span>
+                  </div>
+
+                  <span
+                    style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "0.62rem",
+                      background: "rgba(0, 240, 255, 0.12)",
+                      border: "1px solid rgba(0, 240, 255, 0.3)",
+                      padding: "0.2rem 0.5rem",
+                      borderRadius: "4px",
+                      color: "#00f0ff",
+                      fontWeight: 700,
+                    }}
+                  >
+                    {currentDossier.badge}
+                  </span>
+                </div>
+
+                {/* Main Media Preview Frame */}
+                <div
+                  style={{
+                    position: "relative",
+                    width: "100%",
+                    aspectRatio: "16/10",
+                    borderRadius: "10px",
+                    overflow: "hidden",
+                    border: "1px solid rgba(255, 255, 255, 0.15)",
+                    background: "#080a12",
+                    marginBottom: "0.85rem",
+                    boxShadow: "0 10px 25px rgba(0, 0, 0, 0.6)",
+                  }}
+                >
+                  <img
+                    src={currentDossier.src}
+                    alt={currentDossier.title}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      filter: "brightness(0.92) contrast(1.08)",
+                      transition: "transform 0.4s ease",
+                    }}
+                  />
+
+                  <div
+                    style={{
+                      position: "absolute",
+                      inset: 0,
+                      background: "linear-gradient(to top, rgba(5, 5, 8, 0.9) 0%, transparent 60%)",
+                      pointerEvents: "none",
+                    }}
+                  />
+
+                  {/* Overlay Title */}
+                  <div
+                    style={{
+                      position: "absolute",
+                      bottom: "8px",
+                      left: "10px",
+                      right: "10px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontFamily: "var(--font-display)",
+                        fontSize: "0.85rem",
+                        fontWeight: 700,
+                        color: "#fff",
+                        lineHeight: 1.2,
+                      }}
+                    >
+                      {currentDossier.title}
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: "var(--font-mono)",
+                        fontSize: "0.65rem",
+                        color: "var(--color-muted)",
+                        marginTop: "2px",
+                      }}
+                    >
+                      {currentDossier.subtitle}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Thumbnails row to switch active dossier */}
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "0.4rem" }}>
+                  {visualDossier.map((item, idx) => {
+                    const isSelected = activeDossierIdx === idx;
+                    return (
+                      <button
+                        key={item.title}
+                        onClick={() => setActiveDossierIdx(idx)}
+                        style={{
+                          height: "44px",
+                          borderRadius: "6px",
+                          overflow: "hidden",
+                          border: isSelected ? "2px solid #00f0ff" : "1px solid rgba(255, 255, 255, 0.12)",
+                          cursor: "pointer",
+                          padding: 0,
+                          opacity: isSelected ? 1 : 0.6,
+                          transform: isSelected ? "scale(1.05)" : "scale(1)",
+                          transition: "all 0.2s ease",
+                        }}
+                      >
+                        <img
+                          src={item.src}
+                          alt={item.title}
+                          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Bottom Telemetry Bar */}
+              <div
+                style={{
+                  borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+                  paddingTop: "0.75rem",
+                  marginTop: "1rem",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.68rem",
+                  color: "var(--color-muted)",
+                }}
+              >
+                <span>ARCHIVE: <strong style={{ color: "#00f0ff" }}>RESTRICTED</strong></span>
+                <span style={{ color: "var(--color-white)" }}>FILE {activeDossierIdx + 1}/4</span>
               </div>
             </motion.div>
           </div>

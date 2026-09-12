@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { profile } from "../../data/profile";
 import WebBackground from "../common/WebBackground";
+import LiveVideoBackground from "../common/LiveVideoBackground";
 import { staggerContainer, fadeUp, fadeIn } from "../../animations/variants";
 import {
   MapPin,
@@ -116,10 +117,12 @@ export default function Hero() {
         justifyContent: "center",
         overflow: "hidden",
         paddingTop: "110px",
-        paddingBottom: "4rem",
+        paddingBottom: "5.5rem",
         transform: "translateZ(0)",
       }}
     >
+      {/* 🎬 Spider-Man Cinematic Looping Live Video Background with HUD Switcher */}
+      <LiveVideoBackground variant="hero" showControls={true} defaultIndex={0} />
       <WebBackground variant="hero" />
 
       {/* Spider-Sense Ambient Glow Meshes */}
