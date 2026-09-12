@@ -19,6 +19,7 @@ import QuickDock from "./components/common/QuickDock";
 import PrecisionHUD from "./components/common/PrecisionHUD";
 import MultiverseVault from "./components/sections/MultiverseVault";
 import CurtainSplitTransition from "./components/common/CurtainSplitTransition";
+import LiveVideoBackground from "./components/common/LiveVideoBackground";
 import { useState } from "react";
 
 export default function App() {
@@ -43,6 +44,9 @@ export default function App() {
 
       {isBootComplete && (
         <>
+          {/* Global Persistent Live Video Background across entire site */}
+          <LiveVideoBackground variant="global" showControls={false} />
+
           {/* Global cinematic overlays */}
           <div className="noise-overlay" />
           <div className="vignette" />
@@ -67,7 +71,7 @@ export default function App() {
           <QuickDock />
 
           {/* Main content */}
-          <main>
+          <main style={{ position: "relative", zIndex: 1 }}>
             <Hero />
             <Marquee />
             <About />

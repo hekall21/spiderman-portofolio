@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Film, Play, Pause, Sparkles, Sliders, Volume2, VolumeX, Radio, Check } from "lucide-react";
+import { Film, Play, Pause, Sparkles } from "lucide-react";
 
 export const SPIDEY_LIVE_VIDEOS = [
   {
@@ -42,20 +41,20 @@ export const SPIDEY_LIVE_VIDEOS = [
 ];
 
 export default function LiveVideoBackground({
-  variant = "hero", // "hero" | "global"
-  showControls = true,
+  variant = "global", // "global" | "hero"
+  showControls = false,
   defaultIndex = 0
 }) {
   const [activeVideoIndex, setActiveVideoIndex] = useState(defaultIndex);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
-  const [opacityLevel, setOpacityLevel] = useState(0.42); // 0.2, 0.42, 0.68
+  const [opacityLevel, setOpacityLevel] = useState(0.52); // 0.25, 0.52, 0.75
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
 
   const videoRef = useRef(null);
   const activeVideo = SPIDEY_LIVE_VIDEOS[activeVideoIndex];
 
-  // Listen for global custom events from MultiverseVault
+  // Listen for global custom events from MultiverseVault & HUD Controller
   useEffect(() => {
     const handleSetCustomVideo = (event) => {
       const { videoSrc } = event.detail || {};
@@ -67,8 +66,36 @@ export default function LiveVideoBackground({
       }
     };
 
+    const handleSetIndex = (event) => {
+      if (typeof event.detail?.index === "number") {
+        setActiveVideoIndex(event.detail.index);
+        setIsPlaying(true);
+      }
+    };
+
+    const handleTogglePlay = () => {
+      setIsPlaying((prev) => !prev);
+    };
+
+    const handleCycleOpacity = (event) => {
+      if (typeof event.detail?.opacity === "number") {
+        setOpacityLevel(event.detail.opacity);
+      } else {
+        setOpacityLevel((prev) => (prev <= 0.3 ? 0.52 : prev <= 0.6 ? 0.75 : 0.3));
+      }
+    };
+
     window.addEventListener("set-spidey-live-wallpaper", handleSetCustomVideo);
-    return () => window.removeEventListener("set-spidey-live-wallpaper", handleSetCustomVideo);
+    window.addEventListener("set-spidey-video-idx", handleSetIndex);
+    window.addEventListener("toggle-spidey-video-play", handleTogglePlay);
+    window.addEventListener("cycle-spidey-video-opacity", handleCycleOpacity);
+
+    return () => {
+      window.removeEventListener("set-spidey-live-wallpaper", handleSetCustomVideo);
+      window.removeEventListener("set-spidey-video-idx", handleSetIndex);
+      window.removeEventListener("toggle-spidey-video-play", handleTogglePlay);
+      window.removeEventListener("cycle-spidey-video-opacity", handleCycleOpacity);
+    };
   }, []);
 
   // Sync play/pause with videoRef
@@ -86,27 +113,17 @@ export default function LiveVideoBackground({
     }
   }, [isPlaying, activeVideoIndex]);
 
-  const togglePlay = () => {
-    setIsPlaying((prev) => !prev);
-  };
-
-  const selectVideo = (idx) => {
-    setIsVideoLoaded(false);
-    setActiveVideoIndex(idx);
-    setIsPlaying(true);
-  };
-
   return (
     <div
       className={`spidey-live-video-layer spidey-variant-${variant}`}
       style={{
-        position: variant === "global" ? "fixed" : "absolute",
+        position: "fixed",
         inset: 0,
         width: "100%",
         height: "100%",
         overflow: "hidden",
         pointerEvents: "none",
-        zIndex: variant === "global" ? -3 : 0,
+        zIndex: 0,
       }}
     >
       {/* Video Element */}
@@ -129,7 +146,7 @@ export default function LiveVideoBackground({
           objectFit: "cover",
           transform: "translate(-50%, -50%)",
           opacity: isVideoLoaded ? opacityLevel : 0,
-          transition: "opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1)",
+          transition: "opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
           filter: "saturate(1.2) contrast(1.1)",
         }}
       />
@@ -140,27 +157,10 @@ export default function LiveVideoBackground({
           position: "absolute",
           inset: 0,
           background:
-            variant === "hero"
-              ? "radial-gradient(ellipse at center, rgba(5, 5, 8, 0.4) 0%, rgba(5, 5, 8, 0.82) 70%, rgba(5, 5, 8, 0.98) 100%)"
-              : "rgba(5, 5, 8, 0.75)",
+            "radial-gradient(ellipse at center, rgba(5, 5, 8, 0.45) 0%, rgba(5, 5, 8, 0.78) 75%, rgba(5, 5, 8, 0.92) 100%)",
           pointerEvents: "none",
         }}
       />
-
-      {/* Bottom Gradient Fade for seamless transition into next section */}
-      {variant === "hero" && (
-        <div
-          style={{
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: "180px",
-            background: "linear-gradient(to bottom, transparent 0%, rgba(5, 5, 8, 0.8) 60%, var(--color-bg, #050508) 100%)",
-            pointerEvents: "none",
-          }}
-        />
-      )}
 
       {/* Halftone / Precision Tech Grid Overlay */}
       <div
@@ -173,159 +173,194 @@ export default function LiveVideoBackground({
           pointerEvents: "none",
         }}
       />
+    </div>
+  );
+}
 
-      {/* Interactive HUD Control Pill (Visible on Hero) */}
-      {showControls && variant === "hero" && (
-        <div
-          className="spidey-live-hud-controller"
+/**
+ * Interactive HUD Controller Pill specifically rendered in Hero
+ */
+export function LiveVideoHUDController() {
+  const [activeIdx, setActiveIdx] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [opacity, setOpacity] = useState(0.52);
+
+  const selectVideo = (idx) => {
+    setActiveIdx(idx);
+    setIsPlaying(true);
+    window.dispatchEvent(new CustomEvent("set-spidey-video-idx", { detail: { index: idx } }));
+  };
+
+  const togglePlay = () => {
+    setIsPlaying((prev) => !prev);
+    window.dispatchEvent(new CustomEvent("toggle-spidey-video-play"));
+  };
+
+  const cycleOpacity = () => {
+    const nextOp = opacity <= 0.3 ? 0.52 : opacity <= 0.6 ? 0.75 : 0.3;
+    setOpacity(nextOp);
+    window.dispatchEvent(new CustomEvent("cycle-spidey-video-opacity", { detail: { opacity: nextOp } }));
+  };
+
+  // Sync with external events (e.g. from MultiverseVault)
+  useEffect(() => {
+    const handleSync = (event) => {
+      const { videoSrc } = event.detail || {};
+      if (!videoSrc) return;
+      const found = SPIDEY_LIVE_VIDEOS.findIndex((v) => v.videoSrc === videoSrc);
+      if (found !== -1) {
+        setActiveIdx(found);
+        setIsPlaying(true);
+      }
+    };
+    window.addEventListener("set-spidey-live-wallpaper", handleSync);
+    return () => window.removeEventListener("set-spidey-live-wallpaper", handleSync);
+  }, []);
+
+  return (
+    <div
+      className="spidey-live-hud-controller"
+      style={{
+        position: "absolute",
+        bottom: "1.25rem",
+        left: "50%",
+        transform: "translateX(-50%)",
+        zIndex: 20,
+        pointerEvents: "auto",
+        display: "flex",
+        alignItems: "center",
+        gap: "0.5rem",
+        padding: "0.45rem 0.85rem",
+        background: "rgba(10, 12, 22, 0.88)",
+        backdropFilter: "blur(16px)",
+        border: "1px solid rgba(0, 240, 255, 0.35)",
+        borderRadius: "100px",
+        boxShadow: "0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 240, 255, 0.2)",
+        maxWidth: "94vw",
+      }}
+    >
+      {/* Live Indicator */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "0.4rem",
+          paddingRight: "0.5rem",
+          borderRight: "1px solid rgba(255, 255, 255, 0.12)",
+        }}
+      >
+        <span
           style={{
-            position: "absolute",
-            bottom: "1.25rem",
-            left: "50%",
-            transform: "translateX(-50%)",
-            zIndex: 15,
-            pointerEvents: "auto",
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
-            padding: "0.45rem 0.85rem",
-            background: "rgba(10, 12, 22, 0.85)",
-            backdropFilter: "blur(16px)",
-            border: "1px solid rgba(0, 240, 255, 0.3)",
-            borderRadius: "100px",
-            boxShadow: "0 10px 30px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 240, 255, 0.15)",
-            maxWidth: "92vw",
+            width: "7px",
+            height: "7px",
+            borderRadius: "50%",
+            background: isPlaying ? "#00f0ff" : "#808796",
+            boxShadow: isPlaying ? "0 0 10px #00f0ff" : "none",
+            animation: isPlaying ? "pulse 1.8s infinite" : "none",
+          }}
+        />
+        <span
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.65rem",
+            color: "#ffffff",
+            letterSpacing: "0.08em",
+            fontWeight: 700,
+            whiteSpace: "nowrap",
           }}
         >
-          {/* Live Indicator */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.4rem",
-              paddingRight: "0.5rem",
-              borderRight: "1px solid rgba(255, 255, 255, 0.12)",
-            }}
-          >
-            <span
-              style={{
-                width: "7px",
-                height: "7px",
-                borderRadius: "50%",
-                background: isPlaying ? "#00f0ff" : "#808796",
-                boxShadow: isPlaying ? "0 0 10px #00f0ff" : "none",
-                animation: isPlaying ? "pulse 1.8s infinite" : "none",
-              }}
-            />
-            <span
-              style={{
-                fontFamily: "var(--font-mono)",
-                fontSize: "0.65rem",
-                color: "#ffffff",
-                letterSpacing: "0.08em",
-                fontWeight: 700,
-                whiteSpace: "nowrap",
-              }}
-            >
-              LIVE BG:
-            </span>
-          </div>
+          LIVE BG:
+        </span>
+      </div>
 
-          {/* Video Selector Buttons */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.35rem",
-              overflowX: "auto",
-              scrollbarWidth: "none",
-            }}
-          >
-            {SPIDEY_LIVE_VIDEOS.map((vid, idx) => {
-              const isCurrent = activeVideoIndex === idx;
-              return (
-                <button
-                  key={vid.id}
-                  onClick={() => selectVideo(idx)}
-                  title={vid.tagline}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.35rem",
-                    padding: "0.25rem 0.65rem",
-                    borderRadius: "100px",
-                    fontFamily: "var(--font-mono)",
-                    fontSize: "0.68rem",
-                    fontWeight: isCurrent ? 700 : 500,
-                    color: isCurrent ? "#ffffff" : "var(--color-muted)",
-                    background: isCurrent ? `${vid.accentColor}30` : "rgba(255, 255, 255, 0.04)",
-                    border: isCurrent ? `1px solid ${vid.accentColor}` : "1px solid rgba(255, 255, 255, 0.08)",
-                    cursor: "pointer",
-                    whiteSpace: "nowrap",
-                    transition: "all 0.2s ease",
-                  }}
-                >
-                  <span style={{ color: vid.accentColor }}>●</span>
-                  <span>{vid.title.split(" ")[0]}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Quick Play/Pause & Opacity Presets Toggle */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.35rem",
-              paddingLeft: "0.4rem",
-              borderLeft: "1px solid rgba(255, 255, 255, 0.12)",
-            }}
-          >
+      {/* Video Selector Buttons */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "0.35rem",
+          overflowX: "auto",
+          scrollbarWidth: "none",
+        }}
+      >
+        {SPIDEY_LIVE_VIDEOS.map((vid, idx) => {
+          const isCurrent = activeIdx === idx;
+          return (
             <button
-              onClick={togglePlay}
-              title={isPlaying ? "Jeda Video Background" : "Putar Video Background"}
+              key={vid.id}
+              onClick={() => selectVideo(idx)}
+              title={vid.tagline}
               style={{
-                width: "26px",
-                height: "26px",
-                borderRadius: "50%",
-                background: "rgba(255, 255, 255, 0.08)",
-                border: "1px solid rgba(255, 255, 255, 0.15)",
-                color: "#ffffff",
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-              }}
-            >
-              {isPlaying ? <Pause size={11} fill="#fff" /> : <Play size={11} fill="#fff" />}
-            </button>
-
-            {/* Opacity Cycle (20% -> 42% -> 68%) */}
-            <button
-              onClick={() => {
-                if (opacityLevel === 0.2) setOpacityLevel(0.42);
-                else if (opacityLevel === 0.42) setOpacityLevel(0.68);
-                else setOpacityLevel(0.2);
-              }}
-              title={`Intensitas Background: ${Math.round(opacityLevel * 100)}% (Klik untuk ubah)`}
-              style={{
-                padding: "0.25rem 0.5rem",
-                borderRadius: "6px",
+                gap: "0.35rem",
+                padding: "0.25rem 0.65rem",
+                borderRadius: "100px",
                 fontFamily: "var(--font-mono)",
-                fontSize: "0.62rem",
-                color: "#00f0ff",
-                background: "rgba(0, 240, 255, 0.1)",
-                border: "1px solid rgba(0, 240, 255, 0.25)",
+                fontSize: "0.68rem",
+                fontWeight: isCurrent ? 700 : 500,
+                color: isCurrent ? "#ffffff" : "var(--color-muted)",
+                background: isCurrent ? `${vid.accentColor}30` : "rgba(255, 255, 255, 0.04)",
+                border: isCurrent ? `1px solid ${vid.accentColor}` : "1px solid rgba(255, 255, 255, 0.08)",
                 cursor: "pointer",
                 whiteSpace: "nowrap",
+                transition: "all 0.2s ease",
               }}
             >
-              {Math.round(opacityLevel * 100)}%
+              <span style={{ color: vid.accentColor }}>●</span>
+              <span>{vid.title.split(" ")[0]}</span>
             </button>
-          </div>
-        </div>
-      )}
+          );
+        })}
+      </div>
+
+      {/* Play/Pause & Opacity Presets Toggle */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "0.35rem",
+          paddingLeft: "0.4rem",
+          borderLeft: "1px solid rgba(255, 255, 255, 0.12)",
+        }}
+      >
+        <button
+          onClick={togglePlay}
+          title={isPlaying ? "Jeda Video Background" : "Putar Video Background"}
+          style={{
+            width: "26px",
+            height: "26px",
+            borderRadius: "50%",
+            background: "rgba(255, 255, 255, 0.08)",
+            border: "1px solid rgba(255, 255, 255, 0.15)",
+            color: "#ffffff",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+          }}
+        >
+          {isPlaying ? <Pause size={11} fill="#fff" /> : <Play size={11} fill="#fff" />}
+        </button>
+
+        <button
+          onClick={cycleOpacity}
+          title={`Intensitas Background: ${Math.round(opacity * 100)}% (Klik untuk ubah)`}
+          style={{
+            padding: "0.25rem 0.5rem",
+            borderRadius: "6px",
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.62rem",
+            color: "#00f0ff",
+            background: "rgba(0, 240, 255, 0.1)",
+            border: "1px solid rgba(0, 240, 255, 0.25)",
+            cursor: "pointer",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {Math.round(opacity * 100)}%
+        </button>
+      </div>
     </div>
   );
 }

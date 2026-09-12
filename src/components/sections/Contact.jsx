@@ -122,10 +122,10 @@ export default function Contact() {
       id="contact"
       style={{
         position: "relative",
-        background: "var(--color-bg, #050508)",
+        background: "transparent",
         overflow: "hidden",
-        paddingTop: "6rem",
-        paddingBottom: "6rem",
+        paddingTop: "2.5rem",
+        paddingBottom: "3rem",
       }}
     >
       {/* Background Web Geometry & Cinematic Glows */}

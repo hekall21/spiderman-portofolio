@@ -49,9 +49,13 @@ export default function StickyNotes() {
   const [notes, setNotes] = useState(() => {
     try {
       const savedUserNotes = localStorage.getItem(STORAGE_KEY);
-      return savedUserNotes ? JSON.parse(savedUserNotes) : [];
+      if (savedUserNotes) {
+        const parsed = JSON.parse(savedUserNotes);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+      return INITIAL_STICKY_NOTES || [];
     } catch {
-      return [];
+      return INITIAL_STICKY_NOTES || [];
     }
   });
 

@@ -138,9 +138,9 @@ export default function MultiverseVault() {
       id="vault"
       style={{
         position: "relative",
-        background: "var(--color-bg, #050508)",
-        paddingTop: "7rem",
-        paddingBottom: "7rem",
+        background: "transparent",
+        paddingTop: "2rem",
+        paddingBottom: "2rem",
         overflow: "hidden",
       }}
     >

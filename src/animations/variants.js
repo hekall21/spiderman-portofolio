@@ -1,11 +1,11 @@
 // Centralized Framer Motion variants for performance and consistency
 
 export const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
+  hidden: { opacity: 0, y: 15 },
   visible: { 
     opacity: 1, 
     y: 0, 
-    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } 
+    transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } 
   }
 };
 
@@ -13,47 +13,47 @@ export const fadeIn = {
   hidden: { opacity: 0 },
   visible: { 
     opacity: 1, 
-    transition: { duration: 0.8, ease: "easeOut" } 
+    transition: { duration: 0.4, ease: "easeOut" } 
   }
 };
 
 export const scaleIn = {
-  hidden: { opacity: 0, scale: 0.95 },
+  hidden: { opacity: 0, scale: 0.98 },
   visible: { 
     opacity: 1, 
     scale: 1, 
-    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } 
+    transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } 
   }
 };
 
 export const staggerContainer = {
-  hidden: { opacity: 0 },
+  hidden: { opacity: 1 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.1
+      staggerChildren: 0.05,
+      delayChildren: 0.02
     }
   }
 };
 
 export const slideInLeft = {
-  hidden: { opacity: 0, x: -40 },
+  hidden: { opacity: 0, x: -20 },
   visible: { 
     opacity: 1, 
     x: 0, 
-    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } 
+    transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } 
   }
 };
 
 export const slideInRight = {
-  hidden: { opacity: 0, x: 40 },
+  hidden: { opacity: 0, x: 20 },
   visible: { 
     opacity: 1, 
     x: 0, 
-    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } 
+    transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } 
   }
 };
 
-// Default viewport configuration to ensure animations only run once for performance
-export const defaultViewport = { once: true, amount: 0.2 };
+// Default viewport configuration to trigger 80px BEFORE element enters view
+export const defaultViewport = { once: true, amount: 0.01, margin: "80px" };

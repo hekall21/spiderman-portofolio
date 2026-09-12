@@ -49,10 +49,10 @@ export default function Projects() {
       id="projects"
       style={{
         position: "relative",
-        background: "var(--color-bg, #050508)",
+        background: "transparent",
         overflow: "hidden",
-        paddingTop: "6.5rem",
-        paddingBottom: "6.5rem",
+        paddingTop: "1.5rem",
+        paddingBottom: "1.5rem",
       }}
     >
       {/* Background Ambient Glows */}

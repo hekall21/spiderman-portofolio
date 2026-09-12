@@ -97,7 +97,7 @@ export default function Experience() {
             variants={fadeUp}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true, margin: "60px" }}
             style={{
               display: "inline-flex",
               alignItems: "center",
@@ -128,7 +128,7 @@ export default function Experience() {
             variants={fadeUp}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true, margin: "60px" }}
             className="neon-card"
             style={{
               padding: "clamp(1.5rem, 4vw, 3rem)",
@@ -304,7 +304,7 @@ export default function Experience() {
           variants={fadeUp}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
+          viewport={{ once: true, margin: "60px" }}
           style={{ marginTop: "4rem" }}
         >
           <div
