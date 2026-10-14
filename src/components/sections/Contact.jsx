@@ -54,10 +54,10 @@ export default function Contact() {
   }, []);
 
   const topics = [
-    { id: "web-dev", label: "💼 Junior Web Dev Role" },
-    { id: "network-it", label: "🌐 IT Support / Network Role" },
-    { id: "project", label: "⚡ Web Development Project" },
-    { id: "say-hi", label: "👋 Connect & Say Hi" },
+    { id: "web-dev", label: "Junior Web Dev Role" },
+    { id: "network-it", label: "IT Support / Network Role" },
+    { id: "project", label: "Web Development Project" },
+    { id: "say-hi", label: "Connect & Say Hi" },
   ];
 
   const quickPresets = [

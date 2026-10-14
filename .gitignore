@@ -30,3 +30,11 @@ dist-ssr
 .agent/
 .agents/
 
+# Academic and personal documents protection (Rule 10)
+*.pdf
+*.docx
+*.pptx
+*.xlsx
+PAPER_*.md
+PROPOSAL_*.md
+

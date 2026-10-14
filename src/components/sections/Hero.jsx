@@ -592,9 +592,13 @@ export default function Hero() {
                 whiteSpace: "nowrap",
                 zIndex: 3,
                 boxShadow: "0 0 10px rgba(229,9,20,0.5)",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.35rem",
               }}
             >
-              🕸️ SPIDEY PATROL
+              <Zap size={11} fill="#fff" />
+              <span>SPIDEY PATROL</span>
             </div>
           </motion.div>
 

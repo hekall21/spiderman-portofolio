@@ -52,9 +52,15 @@ export default function Footer() {
             color: "var(--color-muted)",
             marginBottom: "2rem",
             letterSpacing: "0.05em",
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "0.5rem",
           }}
         >
-          "With great technology comes great responsibility." 🕸️✨
+          <Sparkles size={13} color="var(--color-red)" />
+          <span>"With great technology comes great responsibility."</span>
+          <Sparkles size={13} color="var(--color-red)" />
         </p>
 
         {/* Quick Nav Links */}
